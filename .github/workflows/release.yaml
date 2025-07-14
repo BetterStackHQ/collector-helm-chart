@@ -20,8 +20,6 @@ jobs:
           git diff --exit-code
       - name: Install Helm
         uses: azure/setup-helm@v4.3.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Package chart
         run: helm package .
       - name: Create a release
