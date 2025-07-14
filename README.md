@@ -12,15 +12,6 @@ Better Stack collector is the easiest and recommended way of integrating Better 
 
 [Getting started ⇗](https://betterstack.com/docs/logs/collector/)
 
-```bash
-helm repo add better-stack-collector https://betterstackhq.github.io/collector-helm-chart
-helm repo update
-helm install better-stack-collector better-stack/better-stack-collector \
-  --set collector.env.COLLECTOR_SECRET="your-collector-secret-here"
-```
-
-For detailed configuration options, see the [values.yaml](values.yaml) file.
-
 ## Need help?
 
 Please let us know at [hello@betterstack.com](mailto:hello@betterstack.com). We're happy to help!
