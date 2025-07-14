@@ -10,7 +10,7 @@ Better Stack collector is the easiest and recommended way of integrating Better 
 
 ## Documentation
 
-[Getting started ⇗](https://betterstack.com/docs/logs/collector/)
+[Getting started ⇗](https://betterstack.com/docs/logs/collector/#getting-started)
 
 ## Need help?
 

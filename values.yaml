@@ -5,7 +5,7 @@
 # Collector configuration
 collector:
   image:
-    repository: better-stack-collector
+    repository: betterstack/collector
     tag: latest
     pullPolicy: IfNotPresent
 
