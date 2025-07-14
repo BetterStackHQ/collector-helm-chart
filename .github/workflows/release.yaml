@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Ensure that chart version in YAML is the same as release tag
+        run: |
+          cd better-stack-collector
+          sed -i "s/^version: .*/version: ${GITHUB_REF#refs\/tags\/v}/" Chart.yaml
+          git diff --exit-code
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Package chart
+        run: |
+          cd better-stack-collector
+          helm package .
+      - name: Create a release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: 'better-stack-collector/*.tgz'

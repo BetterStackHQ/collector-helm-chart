@@ -1,0 +1,158 @@
+{{- include "better-stack-collector.validateValues" . }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "better-stack-collector.fullname" . }}
+  labels:
+    {{- include "better-stack-collector.labels" . | nindent 4 }}
+    app.kubernetes.io/component: better-stack-collector
+spec:
+  selector:
+    matchLabels:
+      {{- include "better-stack-collector.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "better-stack-collector.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "better-stack-collector.serviceAccountName" . }}
+      hostPID: true
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      # Collector container (non-privileged)
+      - name: collector
+        image: "{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.collector.image.pullPolicy }}
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 0
+          privileged: false
+        env:
+        - name: COLLECTOR_SECRET
+          value: {{ .Values.collector.env.COLLECTOR_SECRET | quote }}
+        - name: BASE_URL
+          value: {{ .Values.collector.env.BASE_URL | quote }}
+        - name: CLUSTER_COLLECTOR
+          value: {{ .Values.collector.env.CLUSTER_COLLECTOR | quote }}
+        - name: VECTOR_LOG_FORMAT
+          value: {{ .Values.collector.env.VECTOR_LOG_FORMAT | quote }}
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        ports:
+        - name: otlp
+          containerPort: {{ .Values.collector.otlpPort }}
+          hostPort: {{ .Values.collector.otlpPort }}
+          protocol: TCP
+        volumeMounts:
+        - name: cgroup
+          mountPath: /sys/fs/cgroup
+          readOnly: true
+        - name: hostname
+          mountPath: /host/proc/sys/kernel/hostname
+          readOnly: true
+        - name: varlog
+          mountPath: /host/var/log
+          readOnly: true
+        - name: varlog-pods
+          mountPath: /var/log/pods
+          readOnly: true
+        - name: docker-containers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        resources:
+          {{- toYaml .Values.collector.resources | nindent 10 }}
+      {{- if .Values.beyla.enabled }}
+      # Beyla container (privileged)
+      - name: beyla
+        image: "{{ .Values.beyla.image.repository }}:{{ .Values.beyla.image.tag }}"
+        imagePullPolicy: {{ .Values.beyla.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.securityContext.beyla | nindent 10 }}
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://localhost:{{ .Values.collector.otlpPort }}"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: {{ .Values.beyla.env.OTEL_EXPORTER_OTLP_PROTOCOL | quote }}
+        - name: BEYLA_OPEN_PORT
+          value: {{ .Values.beyla.env.BEYLA_OPEN_PORT | quote }}
+        - name: BEYLA_EXCLUDE_OTEL_INSTRUMENTED_SERVICES
+          value: {{ .Values.beyla.env.BEYLA_EXCLUDE_OTEL_INSTRUMENTED_SERVICES | quote }}
+        - name: BEYLA_BPF_CONTEXT_PROPAGATION
+          value: {{ .Values.beyla.env.BEYLA_BPF_CONTEXT_PROPAGATION | quote }}
+        - name: BEYLA_BPF_TRACK_REQUEST_HEADERS
+          value: {{ .Values.beyla.env.BEYLA_BPF_TRACK_REQUEST_HEADERS | quote }}
+        - name: BEYLA_KUBE_METADATA_ENABLE
+          value: {{ .Values.beyla.env.BEYLA_KUBE_METADATA_ENABLE | quote }}
+        - name: BEYLA_METRICS_INTERVAL
+          value: {{ .Values.beyla.env.BEYLA_METRICS_INTERVAL | quote }}
+        - name: BEYLA_NETWORK_METRICS
+          value: {{ .Values.beyla.env.BEYLA_NETWORK_METRICS | quote }}
+        - name: BEYLA_CONFIG_PATH
+          value: /etc/beyla/beyla.yaml
+        volumeMounts:
+        - name: beyla-config
+          mountPath: /etc/beyla
+          readOnly: true
+        - name: sys-kernel-tracing
+          mountPath: /sys/kernel/tracing
+        - name: sys-kernel-debug
+          mountPath: /sys/kernel/debug
+        - name: sys-kernel-security
+          mountPath: /sys/kernel/security
+          readOnly: true
+        resources:
+          {{- toYaml .Values.beyla.resources | nindent 10 }}
+      {{- end }}
+      volumes:
+      # Collector volumes
+      - name: cgroup
+        hostPath:
+          path: /sys/fs/cgroup
+      - name: hostname
+        hostPath:
+          path: /proc/sys/kernel/hostname
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlog-pods
+        hostPath:
+          path: /var/log/pods
+      - name: docker-containers
+        hostPath:
+          path: /var/lib/docker/containers
+      {{- if .Values.beyla.enabled }}
+      # Beyla volumes
+      - name: beyla-config
+        configMap:
+          name: {{ include "better-stack-collector.fullname" . }}-beyla
+      - name: sys-kernel-tracing
+        hostPath:
+          path: /sys/kernel/tracing
+      - name: sys-kernel-debug
+        hostPath:
+          path: /sys/kernel/debug
+      - name: sys-kernel-security
+        hostPath:
+          path: /sys/kernel/security
+      {{- end }}
+      {{- with .Values.collector.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.collector.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

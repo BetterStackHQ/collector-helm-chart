@@ -1,0 +1,118 @@
+# Default values for better-stack-collector
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Collector configuration
+collector:
+  image:
+    repository: better-stack-collector
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  # Environment variables
+  env:
+    COLLECTOR_SECRET: ""  # Required: Your collector secret
+    BASE_URL: "https://telemetry.betterstack.com"
+    CLUSTER_COLLECTOR: ""
+    VECTOR_LOG_FORMAT: "json"
+
+  # Resource limits and requests
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+  # Node selector
+  nodeSelector: {}
+
+  # Tolerations
+  tolerations: []
+
+  # Affinity
+  affinity: {}
+
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 34320
+
+  # Port for internal OTLP communication
+  otlpPort: 34320
+
+# Beyla configuration for eBPF tracing
+beyla:
+  enabled: true
+
+  image:
+    repository: grafana/beyla
+    tag: 2.2.4
+    pullPolicy: IfNotPresent
+
+  # Environment variables
+  env:
+    OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+    BEYLA_OPEN_PORT: "1-65535"
+    BEYLA_EXCLUDE_OTEL_INSTRUMENTED_SERVICES: "false"
+    BEYLA_BPF_CONTEXT_PROPAGATION: "all"
+    BEYLA_BPF_TRACK_REQUEST_HEADERS: "true"
+    BEYLA_KUBE_METADATA_ENABLE: "true"
+    BEYLA_METRICS_INTERVAL: "15s"
+    BEYLA_NETWORK_METRICS: "false"
+
+  # Resource limits and requests
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1536Mi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+  # Beyla configuration
+  config: |
+    otel_metrics_export:
+        features:
+          - application
+          - application_process
+
+    attributes:
+      select:
+        http_server_request_duration:
+          include: ["service.name", "server.address", "http.response.status_code"]
+        rpc_server_duration:
+          include: ["service.name", "server.address", "rpc.grpc.status_code"]
+        http_client_request_duration:
+          include: ["service.name", "server.address", "http.response.status_code"]
+        rpc_client_duration:
+          include: ["service.name", "server.address", "rpc.grpc.status_code"]
+
+# RBAC configuration
+rbac:
+  # Create service account
+  create: true
+  # Service account name
+  serviceAccountName: better-stack-collector
+
+# Security context for pods
+securityContext:
+  # For collector deployment
+  collector:
+    runAsNonRoot: false
+    runAsUser: 0
+    fsGroup: 0
+
+  # For Beyla daemonset (requires privileged access)
+  beyla:
+    privileged: true
+
+# Image pull secrets
+imagePullSecrets: []
+
+# Global labels to add to all resources
+commonLabels: {}
+
+# Global annotations to add to all resources
+commonAnnotations: {}

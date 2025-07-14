@@ -1,0 +1,20 @@
+apiVersion: v2
+name: better-stack-collector
+description: A Helm chart for Better Stack Collector - monitoring solution that collects metrics, logs, and traces
+type: application
+version: 0.1.0
+appVersion: "latest"
+keywords:
+  - monitoring
+  - metrics
+  - logs
+  - traces
+  - observability
+maintainers:
+  - name: Better Stack
+    email: hello@betterstack.com
+    url: https://betterstack.com
+home: https://betterstack.com
+icon: https://betterstack.com/static/images/better-stack-logo.png
+sources:
+  - https://github.com/BetterStackHQ/collector-helm-chart

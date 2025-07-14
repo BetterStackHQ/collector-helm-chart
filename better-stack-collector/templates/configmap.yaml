@@ -1,0 +1,12 @@
+{{- if .Values.beyla.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "better-stack-collector.fullname" . }}-beyla
+  labels:
+    {{- include "better-stack-collector.labels" . | nindent 4 }}
+    app.kubernetes.io/component: better-stack-collector
+data:
+  beyla.yaml: |
+{{ .Values.beyla.config | indent 4 }}
+{{- end }}
