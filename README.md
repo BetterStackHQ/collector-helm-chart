@@ -23,23 +23,9 @@ helm install better-stack-collector better-stack/better-stack-collector \
 
 ## Documentation
 
-For detailed documentation, see the [chart README](better-stack-collector/README.md).
+For detailed configuration options, see the [values.yaml](values.yaml) file.
 
 [Getting started ⇗](https://betterstack.com/docs/logs/collector)
-
-## Release Process
-
-To release a new version of the chart:
-
-1. Update the version in `better-stack-collector/Chart.yaml`
-2. Commit your changes
-3. Tag the release: `git tag v0.1.0`
-4. Push the tag: `git push origin v0.1.0`
-
-The GitHub Actions workflow will automatically:
-- Package the chart
-- Create a GitHub release
-- Update the Helm repository index on GitHub Pages
 
 ## Need help?
 Please let us know at [hello@betterstack.com](mailto:hello@betterstack.com). We're happy to help!
