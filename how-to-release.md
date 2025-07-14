@@ -1,4 +1,4 @@
-# Release Process
+# Release a new version
 
 To release a new version of the chart:
 

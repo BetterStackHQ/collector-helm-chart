@@ -10,6 +10,12 @@ keywords:
   - logs
   - traces
   - observability
+  - ebpf
+  - tracing
+  - logging
+  - betterstack
+  - better-stack
+  - better-stack-collector
 maintainers:
   - name: Better Stack
     email: hello@betterstack.com
