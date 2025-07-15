@@ -23,6 +23,11 @@ jobs:
       - name: Install dependencies
         run: |
           sudo snap install yq
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          sparse-checkout: |
+            artifacthub-repo.yaml
       - name: Generate Helm repository index.yaml
         run: |
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
