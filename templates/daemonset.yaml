@@ -53,6 +53,10 @@ spec:
           hostPort: {{ .Values.collector.otlpPort }}
           protocol: TCP
         volumeMounts:
+        {{- if .Values.volumes.dockerMetadata.enabled }}
+        - name: docker-metadata
+          mountPath: {{ .Values.volumes.dockerMetadata.mountPath }}
+        {{- end }}
         - name: cgroup
           mountPath: /sys/fs/cgroup
           readOnly: true
@@ -103,9 +107,10 @@ spec:
         - name: BEYLA_CONFIG_PATH
           value: /etc/beyla/beyla.yaml
         volumeMounts:
-        - name: beyla-config
-          mountPath: /etc/beyla
-          readOnly: true
+        {{- if .Values.volumes.dockerMetadata.enabled }}
+        - name: docker-metadata
+          mountPath: {{ .Values.volumes.dockerMetadata.mountPath }}
+        {{- end }}
         - name: sys-kernel-tracing
           mountPath: /sys/kernel/tracing
         - name: sys-kernel-debug
@@ -117,6 +122,11 @@ spec:
           {{- toYaml .Values.beyla.resources | nindent 10 }}
       {{- end }}
       volumes:
+      {{- if .Values.volumes.dockerMetadata.enabled }}
+      # Shared docker metadata volume
+      - name: docker-metadata
+        emptyDir: {}
+      {{- end }}
       # Collector volumes
       - name: cgroup
         hostPath:
@@ -135,9 +145,6 @@ spec:
           path: /var/lib/docker/containers
       {{- if .Values.beyla.enabled }}
       # Beyla volumes
-      - name: beyla-config
-        configMap:
-          name: {{ include "better-stack-collector.fullname" . }}-beyla
       - name: sys-kernel-tracing
         hostPath:
           path: /sys/kernel/tracing

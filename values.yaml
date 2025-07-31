@@ -47,8 +47,8 @@ beyla:
   enabled: true
 
   image:
-    repository: grafana/beyla
-    tag: 2.2.4
+    repository: betterstack/collector-beyla
+    tag: latest
     pullPolicy: IfNotPresent
 
   # Environment variables
@@ -70,24 +70,6 @@ beyla:
     requests:
       cpu: 250m
       memory: 512Mi
-
-  # Beyla configuration
-  config: |
-    otel_metrics_export:
-        features:
-          - application
-          - application_process
-
-    attributes:
-      select:
-        http_server_request_duration:
-          include: ["service.name", "server.address", "http.response.status_code"]
-        rpc_server_duration:
-          include: ["service.name", "server.address", "rpc.grpc.status_code"]
-        http_client_request_duration:
-          include: ["service.name", "server.address", "http.response.status_code"]
-        rpc_client_duration:
-          include: ["service.name", "server.address", "rpc.grpc.status_code"]
 
 # RBAC configuration
 rbac:
@@ -116,3 +98,11 @@ commonLabels: {}
 
 # Global annotations to add to all resources
 commonAnnotations: {}
+
+# Shared volumes configuration
+volumes:
+  # Docker metadata volume shared between collector and beyla
+  dockerMetadata:
+    enabled: true
+    # Mount path for the docker metadata volume
+    mountPath: /enrichment
