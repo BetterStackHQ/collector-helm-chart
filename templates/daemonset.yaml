@@ -53,7 +53,7 @@ spec:
           hostPort: {{ .Values.collector.otlpPort }}
           protocol: TCP
         volumeMounts:
-        {{- if .Values.volumes.dockerMetadata.enabled }}
+        {{- if and .Values.beyla.enabled .Values.beyla.dockerprobe.enabled }}
         - name: docker-metadata
           mountPath: {{ .Values.volumes.dockerMetadata.mountPath }}
         {{- end }}
@@ -106,8 +106,10 @@ spec:
           value: {{ .Values.beyla.env.BEYLA_NETWORK_METRICS | quote }}
         - name: BEYLA_CONFIG_PATH
           value: /etc/beyla/beyla.yaml
+        - name: ENABLE_DOCKERPROBE
+          value: {{ .Values.beyla.dockerprobe.enabled | quote }}
         volumeMounts:
-        {{- if .Values.volumes.dockerMetadata.enabled }}
+        {{- if .Values.beyla.dockerprobe.enabled }}
         - name: docker-metadata
           mountPath: {{ .Values.volumes.dockerMetadata.mountPath }}
         {{- end }}
@@ -122,7 +124,7 @@ spec:
           {{- toYaml .Values.beyla.resources | nindent 10 }}
       {{- end }}
       volumes:
-      {{- if .Values.volumes.dockerMetadata.enabled }}
+      {{- if and .Values.beyla.enabled .Values.beyla.dockerprobe.enabled }}
       # Shared docker metadata volume
       - name: docker-metadata
         emptyDir: {}

@@ -62,6 +62,10 @@ beyla:
     BEYLA_METRICS_INTERVAL: "15s"
     BEYLA_NETWORK_METRICS: "false"
 
+  # Docker probe configuration
+  dockerprobe:
+    enabled: false
+
   # Resource limits and requests
   resources:
     limits:
@@ -103,6 +107,5 @@ commonAnnotations: {}
 volumes:
   # Docker metadata volume shared between collector and beyla
   dockerMetadata:
-    enabled: true
     # Mount path for the docker metadata volume
     mountPath: /enrichment
