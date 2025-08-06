@@ -49,6 +49,8 @@ spec:
               fieldPath: spec.nodeName
         - name: COLLECTOR_NAME
           value: {{ include "better-stack-collector.fullname" . }}
+        - name: CONTAINER_NAME
+          value: "collector"
         - name: POD_NAME
           valueFrom:
             fieldRef:
@@ -98,6 +100,8 @@ spec:
               fieldPath: spec.nodeName
         - name: COLLECTOR_NAME
           value: {{ include "better-stack-collector.fullname" . }}
+        - name: CONTAINER_NAME
+          value: "beyla"
         - name: POD_NAME
           valueFrom:
             fieldRef:
