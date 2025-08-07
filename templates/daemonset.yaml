@@ -47,6 +47,18 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: COLLECTOR_NAME
+          value: {{ include "better-stack-collector.fullname" . }}
+        - name: CONTAINER_NAME
+          value: "collector"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         ports:
         - name: otlp
           containerPort: {{ .Values.collector.otlpPort }}
@@ -86,6 +98,18 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: COLLECTOR_NAME
+          value: {{ include "better-stack-collector.fullname" . }}
+        - name: CONTAINER_NAME
+          value: "beyla"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: "http://localhost:{{ .Values.collector.otlpPort }}"
         - name: OTEL_EXPORTER_OTLP_PROTOCOL
