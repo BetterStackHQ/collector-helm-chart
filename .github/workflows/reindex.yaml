@@ -3,9 +3,6 @@ name: Reindex
 on:
   release:
     types: [released]
-  workflow_run:
-    workflows: ["Release"]
-    types: [completed]
   workflow_dispatch:
 
 permissions:
