@@ -59,6 +59,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: PROCFS_ROOT
+          value: "/host/proc"
+        - name: SYSFS_ROOT
+          value: "/host/sys"
         ports:
         - name: otlp
           containerPort: {{ .Values.collector.otlpPort }}
@@ -83,6 +87,12 @@ spec:
           readOnly: true
         - name: docker-containers
           mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: procfs
+          mountPath: /host/proc
+          readOnly: true
+        - name: sysfs
+          mountPath: /host/sys
           readOnly: true
         resources:
           {{- toYaml .Values.collector.resources | nindent 10 }}
@@ -169,6 +179,14 @@ spec:
       - name: docker-containers
         hostPath:
           path: /var/lib/docker/containers
+      - name: procfs
+        hostPath:
+          path: /proc
+          type: ""
+      - name: sysfs
+        hostPath:
+          path: /sys
+          type: ""
       {{- if .Values.beyla.enabled }}
       # Beyla volumes
       - name: sys-kernel-tracing
