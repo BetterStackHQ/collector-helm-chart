@@ -138,18 +138,6 @@ spec:
           value: {{ .Values.beyla.env.BEYLA_METRICS_INTERVAL | quote }}
         - name: BEYLA_NETWORK_METRICS
           value: {{ .Values.beyla.env.BEYLA_NETWORK_METRICS | quote }}
-        - name: BEYLA_HEURISTIC_SQL_DETECT
-          value: {{ .Values.beyla.env.BEYLA_HEURISTIC_SQL_DETECT | quote }}
-        - name: BEYLA_MYSQL_PREPARED_STATEMENTS_CACHE_SIZE
-          value: {{ .Values.beyla.env.BEYLA_MYSQL_PREPARED_STATEMENTS_CACHE_SIZE | quote }}
-        - name: BEYLA_BPF_BUFFER_SIZE_MYSQL
-          value: {{ .Values.beyla.env.BEYLA_BPF_BUFFER_SIZE_MYSQL | quote }}
-        - name: BEYLA_BPF_BUFFER_SIZE_POSTGRES
-          value: {{ .Values.beyla.env.BEYLA_BPF_BUFFER_SIZE_POSTGRES | quote }}
-        - name: BEYLA_OTEL_METRICS_INSTRUMENTATIONS
-          value: {{ .Values.beyla.env.BEYLA_OTEL_METRICS_INSTRUMENTATIONS | quote }}
-        - name: BEYLA_OTEL_TRACES_INSTRUMENTATIONS
-          value: {{ .Values.beyla.env.BEYLA_OTEL_TRACES_INSTRUMENTATIONS | quote }}
         - name: BEYLA_CONFIG_PATH
           value: /etc/beyla/beyla.yaml
         - name: ENABLE_DOCKERPROBE
