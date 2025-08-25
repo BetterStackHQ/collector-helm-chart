@@ -43,6 +43,14 @@ spec:
           value: {{ .Values.collector.env.CLUSTER_COLLECTOR | quote }}
         - name: VECTOR_LOG_FORMAT
           value: {{ .Values.collector.env.VECTOR_LOG_FORMAT | quote }}
+        {{- if .Values.collector.env.TLS_DOMAIN }}
+        - name: TLS_DOMAIN
+          value: {{ .Values.collector.env.TLS_DOMAIN | quote }}
+        {{- end }}
+        {{- if .Values.collector.env.PROXY_PORT }}
+        - name: PROXY_PORT
+          value: {{ .Values.collector.env.PROXY_PORT | quote }}
+        {{- end }}
         - name: HOSTNAME
           valueFrom:
             fieldRef:
@@ -68,6 +76,18 @@ spec:
           containerPort: {{ .Values.collector.otlpPort }}
           hostPort: {{ .Values.collector.otlpPort }}
           protocol: TCP
+        {{- if .Values.collector.env.PROXY_PORT }}
+        - name: proxy
+          containerPort: {{ .Values.collector.env.PROXY_PORT | int }}
+          hostPort: {{ .Values.collector.env.PROXY_PORT | int }}
+          protocol: TCP
+        {{- end }}
+        {{- if .Values.collector.env.TLS_DOMAIN }}
+        - name: http
+          containerPort: 80
+          hostPort: 80
+          protocol: TCP
+        {{- end }}
         volumeMounts:
         {{- if and .Values.beyla.enabled .Values.beyla.dockerprobe.enabled }}
         - name: docker-metadata

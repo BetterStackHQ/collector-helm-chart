@@ -69,4 +69,21 @@ Validate required values
 {{- if not .Values.collector.env.COLLECTOR_SECRET }}
 {{- fail "collector.env.COLLECTOR_SECRET is required. Please provide your Better Stack collector secret. Find your collector secret here: https://telemetry.betterstack.com/team/0/collectors." }}
 {{- end }}
+{{- /* Validate TLS_DOMAIN and PROXY_PORT */ -}}
+{{- if .Values.collector.env.TLS_DOMAIN }}
+  {{- if not .Values.collector.env.PROXY_PORT }}
+    {{- fail "collector.env.PROXY_PORT is required when TLS_DOMAIN is set" }}
+  {{- end }}
+  {{- if eq (.Values.collector.env.PROXY_PORT | toString) "80" }}
+    {{- fail "collector.env.PROXY_PORT cannot be 80 when TLS_DOMAIN is set" }}
+  {{- end }}
+{{- end }}
+{{- if .Values.collector.env.PROXY_PORT }}
+  {{- if eq (.Values.collector.env.PROXY_PORT | toString) "33000" }}
+    {{- fail "collector.env.PROXY_PORT cannot be 33000" }}
+  {{- end }}
+  {{- if eq (.Values.collector.env.PROXY_PORT | toString) "34320" }}
+    {{- fail "collector.env.PROXY_PORT cannot be 34320" }}
+  {{- end }}
+{{- end }}
 {{- end }}

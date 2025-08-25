@@ -15,6 +15,8 @@ collector:
     BASE_URL: "https://telemetry.betterstack.com"
     CLUSTER_COLLECTOR: ""
     VECTOR_LOG_FORMAT: "json"
+    TLS_DOMAIN: ""  # Optional: TLS domain for the collector
+    PROXY_PORT: ""  # Required if TLS_DOMAIN is set
 
   # Resource limits and requests
   resources:
