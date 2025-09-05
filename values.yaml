@@ -73,7 +73,7 @@ beyla:
       memory: 1536Mi
     requests:
       cpu: 250m
-      memory: 512Mi
+      memory: 1536Mi
 
 # RBAC configuration
 rbac:
