@@ -75,6 +75,11 @@ beyla:
       cpu: 250m
       memory: 1536Mi
 
+  # Memory restart threshold in MiB (optional)
+  # If set, beyla will restart when memory usage exceeds this value
+  # Should be set below the memory limit to prevent OOM kills
+  memoryRestartThreshold: 1400
+
 # RBAC configuration
 rbac:
   # Create service account

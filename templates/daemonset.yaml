@@ -142,6 +142,26 @@ spec:
           value: /etc/beyla/beyla.yaml
         - name: ENABLE_DOCKERPROBE
           value: {{ .Values.beyla.dockerprobe.enabled | quote }}
+        {{- if .Values.beyla.memoryRestartThreshold }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - |
+              # Get memory usage in MiB
+              MEM_USAGE=$(cat /proc/1/status | grep VmRSS | awk '{print int($2/1024)}')
+              THRESHOLD={{ .Values.beyla.memoryRestartThreshold }}
+              if [ "$MEM_USAGE" -gt "$THRESHOLD" ]; then
+                echo "Memory usage ${MEM_USAGE}MiB exceeds threshold ${THRESHOLD}MiB"
+                exit 1
+              fi
+              exit 0
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 2
+        {{- end }}
         volumeMounts:
         {{- if .Values.beyla.dockerprobe.enabled }}
         - name: docker-metadata
