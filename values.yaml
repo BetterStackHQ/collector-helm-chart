@@ -22,8 +22,8 @@ collector:
       cpu: 2000m
       memory: 2Gi
     requests:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 2000m
+      memory: 2Gi
 
   # Node selector
   nodeSelector: {}
@@ -72,7 +72,7 @@ beyla:
       cpu: 1000m
       memory: 1536Mi
     requests:
-      cpu: 250m
+      cpu: 1000m
       memory: 1536Mi
 
   # Memory restart threshold in MiB (optional)
