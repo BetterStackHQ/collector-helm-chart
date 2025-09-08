@@ -22,8 +22,8 @@ collector:
       cpu: 2000m
       memory: 2Gi
     requests:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 2000m
+      memory: 2Gi
 
   # Node selector
   nodeSelector: {}
@@ -61,6 +61,7 @@ beyla:
     BEYLA_KUBE_METADATA_ENABLE: "true"
     BEYLA_METRICS_INTERVAL: "15s"
     BEYLA_NETWORK_METRICS: "false"
+    GOMEMLIMIT: 1400MiB
 
   # Docker probe configuration
   dockerprobe:
@@ -72,8 +73,13 @@ beyla:
       cpu: 1000m
       memory: 1536Mi
     requests:
-      cpu: 250m
-      memory: 512Mi
+      cpu: 1000m
+      memory: 1536Mi
+
+  # Memory restart threshold in MiB (optional)
+  # If set, beyla will restart when memory usage exceeds this value
+  # Should be set below the memory limit to prevent OOM kills
+  memoryRestartThreshold: 1450
 
 # RBAC configuration
 rbac:
