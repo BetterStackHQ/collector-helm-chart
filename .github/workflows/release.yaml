@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  pages: write
 
 jobs:
   release:
@@ -26,3 +28,7 @@ jobs:
         uses: softprops/action-gh-release@v2.3.2
         with:
           files: '*.tgz'
+  
+  reindex:
+    needs: release
+    uses: ./.github/workflows/reindex.yaml
