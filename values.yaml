@@ -61,6 +61,7 @@ beyla:
     BEYLA_KUBE_METADATA_ENABLE: "true"
     BEYLA_METRICS_INTERVAL: "15s"
     BEYLA_NETWORK_METRICS: "false"
+    GOMEMLIMIT: 1400MiB
 
   # Docker probe configuration
   dockerprobe:
