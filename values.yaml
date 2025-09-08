@@ -79,7 +79,7 @@ beyla:
   # Memory restart threshold in MiB (optional)
   # If set, beyla will restart when memory usage exceeds this value
   # Should be set below the memory limit to prevent OOM kills
-  memoryRestartThreshold: 1400
+  memoryRestartThreshold: 1450
 
 # RBAC configuration
 rbac:
