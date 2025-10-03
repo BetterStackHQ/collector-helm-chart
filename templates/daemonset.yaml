@@ -25,35 +25,6 @@ spec:
       hostPID: true
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
-      initContainers:
-      # Init container to set system limits
-      - name: sysctl-setter
-        image: busybox:1.35
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          runAsUser: 0
-          runAsNonRoot: false
-          capabilities:
-            add:
-              - SYS_ADMIN  # Required for sysctl
-            drop:
-              - ALL  # Drop all other capabilities
-        command:
-        - sh
-        - -c
-        - |
-          echo "Setting system limits for Vector..."
-          sysctl -w fs.inotify.max_user_watches=524288
-          sysctl -w fs.inotify.max_user_instances=8192
-          sysctl -w fs.file-max=2097152
-          echo "System limits configured"
-        resources:
-          limits:
-            memory: 50Mi
-            cpu: 100m
-          requests:
-            memory: 10Mi
-            cpu: 10m
       containers:
       # Collector container (non-privileged)
       - name: collector
