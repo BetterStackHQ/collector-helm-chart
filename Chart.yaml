@@ -2,7 +2,7 @@ apiVersion: v2
 name: collector
 description: A Helm chart for Better Stack Collector - monitoring solution that collects metrics, logs, and traces
 type: application
-version: 0.1.12
+version: 0.1.13
 appVersion: "latest"
 keywords:
   - monitoring
