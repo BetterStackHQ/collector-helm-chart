@@ -68,6 +68,14 @@ spec:
           containerPort: {{ .Values.collector.otlpPort }}
           hostPort: {{ .Values.collector.otlpPort }}
           protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+            - /healthcheck.sh
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
         volumeMounts:
         {{- if and .Values.beyla.enabled .Values.beyla.dockerprobe.enabled }}
         - name: docker-metadata
