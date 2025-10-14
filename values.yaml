@@ -42,6 +42,15 @@ collector:
   # Port for internal OTLP communication
   otlpPort: 34320
 
+  # Host filesystem mount configuration
+  # By default, mounts the entire host root filesystem at /host (read-only)
+  # You can specify specific paths to mount instead. Each path will be mounted
+  # under /host with the same path structure (e.g., /var/www -> /host/var/www)
+  hostMounts:
+    # Array of host paths to mount. If empty, mounts root filesystem
+    # Example: ["/var/www/custom", "/var/lib/something"]
+    paths: []
+
 # Beyla configuration for eBPF tracing
 beyla:
   enabled: true
