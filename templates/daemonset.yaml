@@ -90,9 +90,17 @@ spec:
         - name: docker-containers
           mountPath: /var/lib/docker/containers
           readOnly: true
+        {{- if .Values.collector.hostMounts.paths }}
+        {{- range $index, $path := .Values.collector.hostMounts.paths }}
+        - name: hostfs-{{ $index }}
+          mountPath: /host{{ $path }}
+          readOnly: true
+        {{- end }}
+        {{- else }}
         - name: hostfs
           mountPath: /host
           readOnly: true
+        {{- end }}
         resources:
           {{- toYaml .Values.collector.resources | nindent 10 }}
       {{- if .Values.beyla.enabled }}
@@ -198,10 +206,19 @@ spec:
       - name: docker-containers
         hostPath:
           path: /var/lib/docker/containers
+      {{- if .Values.collector.hostMounts.paths }}
+      {{- range $index, $path := .Values.collector.hostMounts.paths }}
+      - name: hostfs-{{ $index }}
+        hostPath:
+          path: {{ $path }}
+          type: ""
+      {{- end }}
+      {{- else }}
       - name: hostfs
         hostPath:
           path: /
           type: ""
+      {{- end }}
       {{- if .Values.beyla.enabled }}
       # Beyla volumes
       - name: sys-kernel-tracing
