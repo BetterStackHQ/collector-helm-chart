@@ -35,14 +35,11 @@ spec:
           runAsUser: 0
           privileged: false
         env:
-        - name: COLLECTOR_SECRET
-          value: {{ .Values.collector.env.COLLECTOR_SECRET | quote }}
-        - name: BASE_URL
-          value: {{ .Values.collector.env.BASE_URL | quote }}
-        - name: CLUSTER_COLLECTOR
-          value: {{ .Values.collector.env.CLUSTER_COLLECTOR | quote }}
-        - name: VECTOR_LOG_FORMAT
-          value: {{ .Values.collector.env.VECTOR_LOG_FORMAT | quote }}
+        {{- range $key, $value := .Values.collector.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        # System environment variables from Kubernetes downward API
         - name: HOSTNAME
           valueFrom:
             fieldRef:
@@ -111,6 +108,11 @@ spec:
         securityContext:
           {{- toYaml .Values.securityContext.beyla | nindent 10 }}
         env:
+        {{- range $key, $value := .Values.beyla.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        # System environment variables from Kubernetes downward API
         - name: HOSTNAME
           valueFrom:
             fieldRef:
@@ -127,30 +129,13 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        # Special configuration
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: "http://localhost:{{ .Values.collector.otlpPort }}"
-        - name: OTEL_EXPORTER_OTLP_PROTOCOL
-          value: {{ .Values.beyla.env.OTEL_EXPORTER_OTLP_PROTOCOL | quote }}
-        - name: BEYLA_OPEN_PORT
-          value: {{ .Values.beyla.env.BEYLA_OPEN_PORT | quote }}
-        - name: BEYLA_EXCLUDE_OTEL_INSTRUMENTED_SERVICES
-          value: {{ .Values.beyla.env.BEYLA_EXCLUDE_OTEL_INSTRUMENTED_SERVICES | quote }}
-        - name: BEYLA_BPF_CONTEXT_PROPAGATION
-          value: {{ .Values.beyla.env.BEYLA_BPF_CONTEXT_PROPAGATION | quote }}
-        - name: BEYLA_BPF_TRACK_REQUEST_HEADERS
-          value: {{ .Values.beyla.env.BEYLA_BPF_TRACK_REQUEST_HEADERS | quote }}
-        - name: BEYLA_KUBE_METADATA_ENABLE
-          value: {{ .Values.beyla.env.BEYLA_KUBE_METADATA_ENABLE | quote }}
-        - name: BEYLA_METRICS_INTERVAL
-          value: {{ .Values.beyla.env.BEYLA_METRICS_INTERVAL | quote }}
-        - name: BEYLA_NETWORK_METRICS
-          value: {{ .Values.beyla.env.BEYLA_NETWORK_METRICS | quote }}
         - name: BEYLA_CONFIG_PATH
           value: /etc/beyla/beyla.yaml
         - name: ENABLE_DOCKERPROBE
           value: {{ .Values.beyla.dockerprobe.enabled | quote }}
-        - name: GOMEMLIMIT
-          value: {{ .Values.beyla.env.GOMEMLIMIT | quote }}
         {{- if .Values.beyla.memoryRestartThreshold }}
         livenessProbe:
           exec:
@@ -173,7 +158,7 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 5
-          failureThreshold: 2
+          failureThreshold: 3
         {{- end }}
         volumeMounts:
         {{- if .Values.beyla.dockerprobe.enabled }}
