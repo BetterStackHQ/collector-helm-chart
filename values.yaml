@@ -19,11 +19,11 @@ collector:
   # Resource limits and requests
   resources:
     limits:
-      cpu: 2000m
-      memory: 2Gi
+      cpu: 1200m
+      memory: 1Gi
     requests:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 800m
+      memory: 1Gi
 
   # Node selector
   nodeSelector: {}
@@ -62,14 +62,26 @@ beyla:
 
   # Environment variables
   env:
+    OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:34320
     OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
-    BEYLA_OPEN_PORT: "1-65535"
-    BEYLA_EXCLUDE_OTEL_INSTRUMENTED_SERVICES: "false"
-    BEYLA_BPF_CONTEXT_PROPAGATION: "all"
-    BEYLA_BPF_TRACK_REQUEST_HEADERS: "true"
+    BEYLA_DISCOVERY_POLL_INTERVAL: "30s"
+    BEYLA_MIN_PROCESS_AGE: "20s"
+    BEYLA_OPEN_PORT: ""         # Set to "1-32767" to skip ephemeral ports, set to "1-65535" to enable all ports
+    BEYLA_PROFILE_PORT: ""      # Set to 6060 for profiling
+    BEYLA_LOG_LEVEL: ""         # Options: debug, info, warn, error
+    OTEL_TRACES_SAMPLER: ""     # Set to "traceidratio" for sampling
+    OTEL_TRACES_SAMPLER_ARG: "" # Set to "0.1" for 10% sampling
+    OTEL_EBPF_NETWORK_CACHE_MAX_FLOWS: ""
+    BEYLA_EXCLUDE_OTEL_INSTRUMENTED_SERVICES: ""
+    BEYLA_BPF_CONTEXT_PROPAGATION: ""
+    BEYLA_BPF_TRACK_REQUEST_HEADERS: ""
+
+    # Kubernetes metadata for just current node
     BEYLA_KUBE_METADATA_ENABLE: "true"
-    BEYLA_METRICS_INTERVAL: "15s"
-    BEYLA_NETWORK_METRICS: "false"
+    BEYLA_KUBE_META_RESTRICT_LOCAL_NODE: "true"
+
+    # Makes garbage collection more aggressive once memory is over this threshold
+    # Too low might cause GC to run too often and increase CPU usage
     GOMEMLIMIT: 1400MiB
 
   # Docker probe configuration
@@ -80,10 +92,10 @@ beyla:
   resources:
     limits:
       cpu: 1000m
-      memory: 1536Mi
+      memory: 3000Mi # Beyla spikes to about 2GiB after start up
     requests:
-      cpu: 500m
-      memory: 1536Mi
+      cpu: 800m
+      memory: 1000Mi # Then drops to about 200-500MiB depending on cluster size
 
   # Memory restart threshold in MiB (optional)
   # If set, beyla will restart when memory usage exceeds this value
