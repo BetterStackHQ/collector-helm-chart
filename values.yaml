@@ -69,7 +69,7 @@ beyla:
     BEYLA_OPEN_PORT: ""         # Set to "1-32767" to skip ephemeral ports, set to "1-65535" to enable all ports
     BEYLA_PROFILE_PORT: ""      # Set to 6060 for profiling
     BEYLA_LOG_LEVEL: ""         # Options: debug, info, warn, error
-    OTEL_TRACES_SAMPLER: "" "   # Set to "traceidratio" for sampling
+    OTEL_TRACES_SAMPLER: ""     # Set to "traceidratio" for sampling
     OTEL_TRACES_SAMPLER_ARG: "" # Set to "0.1" for 10% sampling
     OTEL_EBPF_NETWORK_CACHE_MAX_FLOWS: ""
     BEYLA_EXCLUDE_OTEL_INSTRUMENTED_SERVICES: ""
