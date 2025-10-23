@@ -66,6 +66,7 @@ beyla:
     OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
     BEYLA_DISCOVERY_POLL_INTERVAL: "30s"
     BEYLA_MIN_PROCESS_AGE: "20s"
+    BEYLA_CONFIG_PATH: "/etc/beyla/beyla.yaml"
     BEYLA_OPEN_PORT: ""         # Set to "1-32767" to skip ephemeral ports, set to "1-65535" to enable all ports
     BEYLA_PROFILE_PORT: ""      # Set to 6060 for profiling
     BEYLA_LOG_LEVEL: ""         # Options: debug, info, warn, error
