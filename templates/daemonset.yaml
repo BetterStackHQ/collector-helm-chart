@@ -36,8 +36,10 @@ spec:
           privileged: false
         env:
         {{- range $key, $value := .Values.collector.env }}
+        {{- if $value }}
         - name: {{ $key }}
           value: {{ $value | quote }}
+        {{- end }}
         {{- end }}
         # System environment variables from Kubernetes downward API
         - name: HOSTNAME
@@ -109,8 +111,10 @@ spec:
           {{- toYaml .Values.securityContext.beyla | nindent 10 }}
         env:
         {{- range $key, $value := .Values.beyla.env }}
+        {{- if $value }}
         - name: {{ $key }}
           value: {{ $value | quote }}
+        {{- end }}
         {{- end }}
         # System environment variables from Kubernetes downward API
         - name: HOSTNAME
