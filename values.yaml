@@ -62,7 +62,7 @@ beyla:
 
   # Environment variables
   env:
-    OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:34320
+    # OTEL_EXPORTER_OTLP_ENDPOINT is set dynamically in the template
     OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
     BEYLA_DISCOVERY_POLL_INTERVAL: "30s"
     BEYLA_MIN_PROCESS_AGE: "20s"

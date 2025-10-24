@@ -133,11 +133,9 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        # Special configuration
+        # Special configuration (these need dynamic template values)
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: "http://localhost:{{ .Values.collector.otlpPort }}"
-        - name: BEYLA_CONFIG_PATH
-          value: /etc/beyla/beyla.yaml
         - name: ENABLE_DOCKERPROBE
           value: {{ .Values.beyla.dockerprobe.enabled | quote }}
         {{- if .Values.beyla.memoryRestartThreshold }}
