@@ -66,13 +66,15 @@ spec:
           value: {{ .Chart.Version | quote }}
         ports:
         - name: otlp
-          containerPort: {{ .Values.collector.otlpPort }}
-          hostPort: {{ .Values.collector.otlpPort }}
+          containerPort: 34320
+          hostPort: 34320
           protocol: TCP
         livenessProbe:
           exec:
             command:
-            - /healthcheck.sh
+            - /bin/sh
+            - -c
+            - if [ -x /var/lib/better-stack/collector/healthcheck.sh ]; then /var/lib/better-stack/collector/healthcheck.sh; else exit 0; fi
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 10
@@ -82,6 +84,8 @@ spec:
         - name: docker-metadata
           mountPath: {{ .Values.volumes.dockerMetadata.mountPath }}
         {{- end }}
+        - name: betterstack-data
+          mountPath: /var/lib/better-stack
         - name: cgroup
           mountPath: /sys/fs/cgroup
           readOnly: true
@@ -138,8 +142,6 @@ spec:
         - name: HELM_CHART_VERSION
           value: {{ .Chart.Version | quote }}
         # Special configuration (these need dynamic template values)
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: "http://localhost:{{ .Values.collector.otlpPort }}"
         - name: ENABLE_DOCKERPROBE
           value: {{ .Values.beyla.dockerprobe.enabled | quote }}
         {{- if .Values.beyla.memoryRestartThreshold }}
@@ -171,6 +173,8 @@ spec:
         - name: docker-metadata
           mountPath: {{ .Values.volumes.dockerMetadata.mountPath }}
         {{- end }}
+        - name: betterstack-data
+          mountPath: /var/lib/better-stack
         - name: sys-kernel-tracing
           mountPath: /sys/kernel/tracing
         - name: sys-kernel-debug
@@ -187,6 +191,9 @@ spec:
       - name: docker-metadata
         emptyDir: {}
       {{- end }}
+      # Shared Better Stack data volume
+      - name: betterstack-data
+        emptyDir: {}
       # Collector volumes
       - name: cgroup
         hostPath:

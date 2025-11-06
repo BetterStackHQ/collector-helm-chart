@@ -34,14 +34,6 @@ collector:
   # Affinity
   affinity: {}
 
-  # Service configuration
-  service:
-    type: ClusterIP
-    port: 34320
-
-  # Port for internal OTLP communication
-  otlpPort: 34320
-
   # Host filesystem mount configuration
   # By default, mounts the entire host root filesystem at /host (read-only)
   # You can specify specific paths to mount instead. Each path will be mounted
@@ -62,25 +54,6 @@ beyla:
 
   # Environment variables
   env:
-    # OTEL_EXPORTER_OTLP_ENDPOINT is set dynamically in the template
-    OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
-    BEYLA_DISCOVERY_POLL_INTERVAL: "30s"
-    BEYLA_MIN_PROCESS_AGE: "20s"
-    BEYLA_CONFIG_PATH: "/etc/beyla/beyla.yaml"
-    BEYLA_OPEN_PORT: ""         # Set to "1-32767" to skip ephemeral ports, set to "1-65535" to enable all ports
-    BEYLA_PROFILE_PORT: ""      # Set to 6060 for profiling
-    BEYLA_LOG_LEVEL: ""         # Options: debug, info, warn, error
-    OTEL_TRACES_SAMPLER: ""     # Set to "traceidratio" for sampling
-    OTEL_TRACES_SAMPLER_ARG: "" # Set to "0.1" for 10% sampling
-    OTEL_EBPF_NETWORK_CACHE_MAX_FLOWS: ""
-    BEYLA_EXCLUDE_OTEL_INSTRUMENTED_SERVICES: ""
-    BEYLA_BPF_CONTEXT_PROPAGATION: ""
-    BEYLA_BPF_TRACK_REQUEST_HEADERS: ""
-
-    # Kubernetes metadata for just current node
-    BEYLA_KUBE_METADATA_ENABLE: "true"
-    BEYLA_KUBE_META_RESTRICT_LOCAL_NODE: "true"
-
     # Makes garbage collection more aggressive once memory is over this threshold
     # Too low might cause GC to run too often and increase CPU usage
     GOMEMLIMIT: 1400MiB
