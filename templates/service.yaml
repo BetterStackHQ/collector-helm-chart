@@ -6,9 +6,9 @@ metadata:
     {{- include "better-stack-collector.labels" . | nindent 4 }}
     app.kubernetes.io/component: better-stack-collector
 spec:
-  type: {{ .Values.collector.service.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .Values.collector.service.port }}
+    - port: 34320
       targetPort: otlp
       protocol: TCP
       name: otlp
