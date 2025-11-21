@@ -5,12 +5,3 @@ metadata:
   labels:
     {{- include "better-stack-collector.labels" . | nindent 4 }}
     app.kubernetes.io/component: better-stack-collector
-spec:
-  type: ClusterIP
-  ports:
-    - port: 34320
-      targetPort: otlp
-      protocol: TCP
-      name: otlp
-  selector:
-    {{- include "better-stack-collector.selectorLabels" . | nindent 4 }}
