@@ -22,7 +22,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "better-stack-collector.serviceAccountName" . }}
-      hostPID: true
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}      hostPID: true
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       containers:
