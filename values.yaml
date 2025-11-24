@@ -123,9 +123,3 @@ commonAnnotations: {}
 # Priority class (optional)
 # priorityClassName: ""
 
-# Shared volumes configuration
-volumes:
-  # Docker metadata volume shared between collector and beyla
-  dockerMetadata:
-    # Mount path for the docker metadata volume
-    mountPath: /enrichment

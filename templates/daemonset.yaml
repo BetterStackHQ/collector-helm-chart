@@ -94,10 +94,6 @@ spec:
           timeoutSeconds: 10
           failureThreshold: 3
         volumeMounts:
-        {{- if and .Values.beyla.enabled .Values.beyla.dockerprobe.enabled }}
-        - name: docker-metadata
-          mountPath: {{ .Values.volumes.dockerMetadata.mountPath }}
-        {{- end }}
         - name: betterstack-data
           mountPath: /var/lib/better-stack
         - name: cgroup
@@ -194,10 +190,6 @@ spec:
           failureThreshold: 3
         {{- end }}
         volumeMounts:
-        {{- if .Values.beyla.dockerprobe.enabled }}
-        - name: docker-metadata
-          mountPath: {{ .Values.volumes.dockerMetadata.mountPath }}
-        {{- end }}
         - name: betterstack-data
           mountPath: /var/lib/better-stack
         - name: sys-kernel-tracing
@@ -211,11 +203,6 @@ spec:
           {{- toYaml .Values.beyla.resources | nindent 10 }}
       {{- end }}
       volumes:
-      {{- if and .Values.beyla.enabled .Values.beyla.dockerprobe.enabled }}
-      # Shared docker metadata volume
-      - name: docker-metadata
-        emptyDir: {}
-      {{- end }}
       # Shared Better Stack data volume
       - name: betterstack-data
         emptyDir: {}
