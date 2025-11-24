@@ -17,8 +17,7 @@ collector:
     VECTOR_LOG_FORMAT: "json"
 
   # Environment variables from ConfigMaps and Secrets
-  # Note: Explicit env entries take precedence over envFrom sources
-  # Example for COLLECTOR_SECRET: create secret with 'kubectl create secret generic collector-secret --from-literal=COLLECTOR_SECRET=your-secret'
+  # Note: Explicit env entries in collector.env take precedence over envFrom sources
   envFrom:
     # List of ConfigMap names to load environment variables from
     configMapRefs: []
@@ -68,6 +67,7 @@ beyla:
     GOMEMLIMIT: 1400MiB
 
   # Environment variables from ConfigMaps and Secrets
+  # Note: Explicit env entries in beyla.env take precedence over envFrom sources
   envFrom:
     # List of ConfigMap names to load environment variables from
     configMapRefs: []
