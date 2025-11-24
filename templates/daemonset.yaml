@@ -24,7 +24,8 @@ spec:
       serviceAccountName: {{ include "better-stack-collector.serviceAccountName" . }}
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName | quote }}
-      {{- end }}      hostPID: true
+      {{- end }}
+      hostPID: true
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       containers:
@@ -41,6 +42,17 @@ spec:
         {{- if $value }}
         - name: {{ $key }}
           value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
+        {{- if or .Values.collector.envFrom.configMapRefs .Values.collector.envFrom.secretRefs }}
+        envFrom:
+        {{- range .Values.collector.envFrom.configMapRefs }}
+        - configMapRef:
+            name: {{ . | quote }}
+        {{- end }}
+        {{- range .Values.collector.envFrom.secretRefs }}
+        - secretRef:
+            name: {{ . | quote }}
         {{- end }}
         {{- end }}
         # System environment variables from Kubernetes downward API
@@ -122,6 +134,17 @@ spec:
         {{- if $value }}
         - name: {{ $key }}
           value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
+        {{- if or .Values.beyla.envFrom.configMapRefs .Values.beyla.envFrom.secretRefs }}
+        envFrom:
+        {{- range .Values.beyla.envFrom.configMapRefs }}
+        - configMapRef:
+            name: {{ . | quote }}
+        {{- end }}
+        {{- range .Values.beyla.envFrom.secretRefs }}
+        - secretRef:
+            name: {{ . | quote }}
         {{- end }}
         {{- end }}
         # System environment variables from Kubernetes downward API
