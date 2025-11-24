@@ -11,10 +11,18 @@ collector:
 
   # Environment variables
   env:
-    COLLECTOR_SECRET: ""  # Required: Your collector secret
+    COLLECTOR_SECRET: ""  # Required: Your collector secret (leave empty if you set it via envFrom.secretRefs)
     BASE_URL: "https://telemetry.betterstack.com"
     CLUSTER_COLLECTOR: ""
     VECTOR_LOG_FORMAT: "json"
+
+  # Environment variables from ConfigMaps and Secrets
+  # Note: Explicit env entries in collector.env take precedence over envFrom sources
+  envFrom:
+    # List of ConfigMap names to load environment variables from
+    configMapRefs: []
+    # List of Secret names to load environment variables from (e.g., ["collector-secret"])
+    secretRefs: []
 
   # Resource limits and requests
   resources:
@@ -57,6 +65,14 @@ beyla:
     # Makes garbage collection more aggressive once memory is over this threshold
     # Too low might cause GC to run too often and increase CPU usage
     GOMEMLIMIT: 1400MiB
+
+  # Environment variables from ConfigMaps and Secrets
+  # Note: Explicit env entries in beyla.env take precedence over envFrom sources
+  envFrom:
+    # List of ConfigMap names to load environment variables from
+    configMapRefs: []
+    # List of Secret names to load environment variables from
+    secretRefs: []
 
   # Docker probe configuration
   dockerprobe:
@@ -103,3 +119,7 @@ commonLabels: {}
 
 # Global annotations to add to all resources
 commonAnnotations: {}
+
+# Priority class (optional)
+# priorityClassName: ""
+

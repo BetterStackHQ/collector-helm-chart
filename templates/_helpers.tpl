@@ -66,7 +66,7 @@ Create the name of the service account to use
 Validate required values
 */}}
 {{- define "better-stack-collector.validateValues" -}}
-{{- if not .Values.collector.env.COLLECTOR_SECRET }}
-{{- fail "collector.env.COLLECTOR_SECRET is required. Please provide your Better Stack collector secret. Find your collector secret here: https://telemetry.betterstack.com/team/0/collectors." }}
+{{- if not (or .Values.collector.env.COLLECTOR_SECRET (gt (len .Values.collector.envFrom.secretRefs) 0)) }}
+{{- fail "COLLECTOR_SECRET is required. Please provide your Better Stack collector secret either via collector.env.COLLECTOR_SECRET or through collector.envFrom.secretRefs. Find your collector secret here: https://telemetry.betterstack.com/team/0/collectors." }}
 {{- end }}
 {{- end }}
