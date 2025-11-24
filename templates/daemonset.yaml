@@ -44,7 +44,7 @@ spec:
           value: {{ $value | quote }}
         {{- end }}
         {{- end }}
-        {{- if or .Values.collector.envFrom.configMapRefs .Values.collector.envFrom.secretRefs }}
+        {{- if or (gt (len .Values.collector.envFrom.configMapRefs) 0) (gt (len .Values.collector.envFrom.secretRefs) 0) }}
         envFrom:
         {{- range .Values.collector.envFrom.configMapRefs }}
         - configMapRef:
@@ -136,7 +136,7 @@ spec:
           value: {{ $value | quote }}
         {{- end }}
         {{- end }}
-        {{- if or .Values.beyla.envFrom.configMapRefs .Values.beyla.envFrom.secretRefs }}
+        {{- if or (gt (len .Values.beyla.envFrom.configMapRefs) 0) (gt (len .Values.beyla.envFrom.secretRefs) 0) }}
         envFrom:
         {{- range .Values.beyla.envFrom.configMapRefs }}
         - configMapRef:
