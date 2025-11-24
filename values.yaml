@@ -11,12 +11,13 @@ collector:
 
   # Environment variables
   env:
-    COLLECTOR_SECRET: ""  # Required: Your collector secret
+    COLLECTOR_SECRET: ""  # Required: Your collector secret (leave empty if using envFrom below)
     BASE_URL: "https://telemetry.betterstack.com"
     CLUSTER_COLLECTOR: ""
     VECTOR_LOG_FORMAT: "json"
 
   # Environment variables from ConfigMaps and Secrets
+  # Note: Explicit env entries take precedence over envFrom sources
   envFrom:
     # List of ConfigMap names to load environment variables from
     configMapRefs: []
