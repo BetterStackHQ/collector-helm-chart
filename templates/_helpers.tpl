@@ -67,6 +67,6 @@ Validate required values
 */}}
 {{- define "better-stack-collector.validateValues" -}}
 {{- if not (or .Values.collector.env.COLLECTOR_SECRET (gt (len .Values.collector.envFrom.secretRefs) 0)) }}
-{{- fail "COLLECTOR_SECRET is required. Please provide your Better Stack collector secret either via collector.env.COLLECTOR_SECRET or through envFrom using secretRefs. Find your collector secret here: https://telemetry.betterstack.com/team/0/collectors." }}
+{{- fail "COLLECTOR_SECRET is required. Please provide your Better Stack collector secret either via collector.env.COLLECTOR_SECRET or through collector.envFrom.secretRefs. Find your collector secret here: https://telemetry.betterstack.com/team/0/collectors." }}
 {{- end }}
 {{- end }}
