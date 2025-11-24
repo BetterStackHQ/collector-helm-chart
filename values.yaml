@@ -18,10 +18,11 @@ collector:
 
   # Environment variables from ConfigMaps and Secrets
   # Note: Explicit env entries take precedence over envFrom sources
+  # Example for COLLECTOR_SECRET: create secret with 'kubectl create secret generic collector-secret --from-literal=COLLECTOR_SECRET=your-secret'
   envFrom:
     # List of ConfigMap names to load environment variables from
     configMapRefs: []
-    # List of Secret names to load environment variables from
+    # List of Secret names to load environment variables from (e.g., ["collector-secret"])
     secretRefs: []
 
   # Resource limits and requests
