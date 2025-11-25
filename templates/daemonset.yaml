@@ -44,17 +44,6 @@ spec:
           value: {{ $value | quote }}
         {{- end }}
         {{- end }}
-        {{- if or (gt (len .Values.collector.envFrom.configMapRefs) 0) (gt (len .Values.collector.envFrom.secretRefs) 0) }}
-        envFrom:
-        {{- range .Values.collector.envFrom.configMapRefs }}
-        - configMapRef:
-            name: {{ . | quote }}
-        {{- end }}
-        {{- range .Values.collector.envFrom.secretRefs }}
-        - secretRef:
-            name: {{ . | quote }}
-        {{- end }}
-        {{- end }}
         # System environment variables from Kubernetes downward API
         - name: HOSTNAME
           valueFrom:
@@ -78,6 +67,17 @@ spec:
           value: "/host/sys"
         - name: HELM_CHART_VERSION
           value: {{ .Chart.Version | quote }}
+        {{- if or (gt (len .Values.collector.envFrom.configMapRefs) 0) (gt (len .Values.collector.envFrom.secretRefs) 0) }}
+        envFrom:
+        {{- range .Values.collector.envFrom.configMapRefs }}
+        - configMapRef:
+            name: {{ . | quote }}
+        {{- end }}
+        {{- range .Values.collector.envFrom.secretRefs }}
+        - secretRef:
+            name: {{ . | quote }}
+        {{- end }}
+        {{- end }}
         ports:
         - name: otlp
           containerPort: 34320
@@ -132,17 +132,6 @@ spec:
           value: {{ $value | quote }}
         {{- end }}
         {{- end }}
-        {{- if or (gt (len .Values.beyla.envFrom.configMapRefs) 0) (gt (len .Values.beyla.envFrom.secretRefs) 0) }}
-        envFrom:
-        {{- range .Values.beyla.envFrom.configMapRefs }}
-        - configMapRef:
-            name: {{ . | quote }}
-        {{- end }}
-        {{- range .Values.beyla.envFrom.secretRefs }}
-        - secretRef:
-            name: {{ . | quote }}
-        {{- end }}
-        {{- end }}
         # System environment variables from Kubernetes downward API
         - name: HOSTNAME
           valueFrom:
@@ -165,6 +154,17 @@ spec:
         # Special configuration (these need dynamic template values)
         - name: ENABLE_DOCKERPROBE
           value: {{ .Values.beyla.dockerprobe.enabled | quote }}
+        {{- if or (gt (len .Values.beyla.envFrom.configMapRefs) 0) (gt (len .Values.beyla.envFrom.secretRefs) 0) }}
+        envFrom:
+        {{- range .Values.beyla.envFrom.configMapRefs }}
+        - configMapRef:
+            name: {{ . | quote }}
+        {{- end }}
+        {{- range .Values.beyla.envFrom.secretRefs }}
+        - secretRef:
+            name: {{ . | quote }}
+        {{- end }}
+        {{- end }}
         {{- if .Values.beyla.memoryRestartThreshold }}
         livenessProbe:
           exec:
