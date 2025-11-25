@@ -38,83 +38,84 @@ spec:
           runAsUser: 0
           privileged: false
         env:
-        {{- range $key, $value := .Values.collector.env }}
-        {{- if $value }}
-        - name: {{ $key }}
-          value: {{ $value | quote }}
-        {{- end }}
-        {{- end }}
-        # System environment variables from Kubernetes downward API
-        - name: HOSTNAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: COLLECTOR_NAME
-          value: {{ include "better-stack-collector.fullname" . }}
-        - name: CONTAINER_NAME
-          value: "collector"
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: PROCFS_ROOT
-          value: "/host/proc"
-        - name: SYSFS_ROOT
-          value: "/host/sys"
-        - name: HELM_CHART_VERSION
-          value: {{ .Chart.Version | quote }}
+          # Custom environment variables from values.yaml
+          {{- range $key, $value := .Values.collector.env }}
+          {{- if $value }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+          # System environment variables from Kubernetes downward API
+          - name: HOSTNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: COLLECTOR_NAME
+            value: {{ include "better-stack-collector.fullname" . }}
+          - name: CONTAINER_NAME
+            value: "collector"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: PROCFS_ROOT
+            value: "/host/proc"
+          - name: SYSFS_ROOT
+            value: "/host/sys"
+          - name: HELM_CHART_VERSION
+            value: {{ .Chart.Version | quote }}
         {{- if or (gt (len .Values.collector.envFrom.configMapRefs) 0) (gt (len .Values.collector.envFrom.secretRefs) 0) }}
         envFrom:
-        {{- range .Values.collector.envFrom.configMapRefs }}
-        - configMapRef:
-            name: {{ . | quote }}
-        {{- end }}
-        {{- range .Values.collector.envFrom.secretRefs }}
-        - secretRef:
-            name: {{ . | quote }}
-        {{- end }}
+          {{- range .Values.collector.envFrom.configMapRefs }}
+          - configMapRef:
+              name: {{ . | quote }}
+          {{- end }}
+          {{- range .Values.collector.envFrom.secretRefs }}
+          - secretRef:
+              name: {{ . | quote }}
+          {{- end }}
         {{- end }}
         ports:
-        - name: otlp
-          containerPort: 34320
-          hostPort: 34320
-          protocol: TCP
+          - name: otlp
+            containerPort: 34320
+            hostPort: 34320
+            protocol: TCP
         livenessProbe:
           exec:
             command:
-            - /bin/sh
-            - -c
-            - if [ -x /var/lib/better-stack/collector/healthcheck.sh ]; then /var/lib/better-stack/collector/healthcheck.sh; else exit 0; fi
+              - /bin/sh
+              - -c
+              - if [ -x /var/lib/better-stack/collector/healthcheck.sh ]; then /var/lib/better-stack/collector/healthcheck.sh; else exit 0; fi
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 10
           failureThreshold: 3
         volumeMounts:
-        - name: betterstack-data
-          mountPath: /var/lib/better-stack
-        - name: cgroup
-          mountPath: /sys/fs/cgroup
-          readOnly: true
-        - name: varlog-pods
-          mountPath: /var/log/pods
-          readOnly: true
-        - name: docker-containers
-          mountPath: /var/lib/docker/containers
-          readOnly: true
-        {{- if .Values.collector.hostMounts.paths }}
-        {{- range $index, $path := .Values.collector.hostMounts.paths }}
-        - name: hostfs-{{ $index }}
-          mountPath: /host{{ $path }}
-          readOnly: true
-        {{- end }}
-        {{- else }}
-        - name: hostfs
-          mountPath: /host
-          readOnly: true
+          - name: betterstack-data
+            mountPath: /var/lib/better-stack
+          - name: cgroup
+            mountPath: /sys/fs/cgroup
+            readOnly: true
+          - name: varlog-pods
+            mountPath: /var/log/pods
+            readOnly: true
+          - name: docker-containers
+            mountPath: /var/lib/docker/containers
+            readOnly: true
+          {{- if .Values.collector.hostMounts.paths }}
+          {{- range $index, $path := .Values.collector.hostMounts.paths }}
+          - name: hostfs-{{ $index }}
+            mountPath: /host{{ $path }}
+            readOnly: true
+          {{- end }}
+          {{- else }}
+          - name: hostfs
+            mountPath: /host
+            readOnly: true
         {{- end }}
         resources:
           {{- toYaml .Values.collector.resources | nindent 10 }}
@@ -126,121 +127,122 @@ spec:
         securityContext:
           {{- toYaml .Values.securityContext.beyla | nindent 10 }}
         env:
-        {{- range $key, $value := .Values.beyla.env }}
-        {{- if $value }}
-        - name: {{ $key }}
-          value: {{ $value | quote }}
-        {{- end }}
-        {{- end }}
-        # System environment variables from Kubernetes downward API
-        - name: HOSTNAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: COLLECTOR_NAME
-          value: {{ include "better-stack-collector.fullname" . }}
-        - name: CONTAINER_NAME
-          value: "beyla"
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: HELM_CHART_VERSION
-          value: {{ .Chart.Version | quote }}
-        # Special configuration (these need dynamic template values)
-        - name: ENABLE_DOCKERPROBE
-          value: {{ .Values.beyla.dockerprobe.enabled | quote }}
+          # Custom environment variables from values.yaml
+          {{- range $key, $value := .Values.beyla.env }}
+          {{- if $value }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+          # System environment variables from Kubernetes downward API
+          - name: HOSTNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: COLLECTOR_NAME
+            value: {{ include "better-stack-collector.fullname" . }}
+          - name: CONTAINER_NAME
+            value: "beyla"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: HELM_CHART_VERSION
+            value: {{ .Chart.Version | quote }}
+          # Special configuration (these need dynamic template values)
+          - name: ENABLE_DOCKERPROBE
+            value: {{ .Values.beyla.dockerprobe.enabled | quote }}
         {{- if or (gt (len .Values.beyla.envFrom.configMapRefs) 0) (gt (len .Values.beyla.envFrom.secretRefs) 0) }}
         envFrom:
-        {{- range .Values.beyla.envFrom.configMapRefs }}
-        - configMapRef:
-            name: {{ . | quote }}
-        {{- end }}
-        {{- range .Values.beyla.envFrom.secretRefs }}
-        - secretRef:
-            name: {{ . | quote }}
-        {{- end }}
+          {{- range .Values.beyla.envFrom.configMapRefs }}
+          - configMapRef:
+              name: {{ . | quote }}
+          {{- end }}
+          {{- range .Values.beyla.envFrom.secretRefs }}
+          - secretRef:
+              name: {{ . | quote }}
+          {{- end }}
         {{- end }}
         {{- if .Values.beyla.memoryRestartThreshold }}
         livenessProbe:
           exec:
             command:
-            - /bin/sh
-            - -c
-            - |
-              BEYLA_PID=$(pgrep -f '^/usr/local/bin/beyla' | head -1)
-              if [ -z "$BEYLA_PID" ]; then
-                echo "Beyla process not found"
-                exit 1
-              fi
-              MEM_USAGE=$(cat /proc/$BEYLA_PID/status | grep VmRSS | awk '{print int($2/1024)}')
-              THRESHOLD={{ .Values.beyla.memoryRestartThreshold }}
-              if [ "$MEM_USAGE" -gt "$THRESHOLD" ]; then
-                echo "Beyla memory usage ${MEM_USAGE}MiB exceeds threshold ${THRESHOLD}MiB"
-                exit 1
-              fi
-              exit 0
+              - /bin/sh
+              - -c
+              - |
+                BEYLA_PID=$(pgrep -f '^/usr/local/bin/beyla' | head -1)
+                if [ -z "$BEYLA_PID" ]; then
+                  echo "Beyla process not found"
+                  exit 1
+                fi
+                MEM_USAGE=$(cat /proc/$BEYLA_PID/status | grep VmRSS | awk '{print int($2/1024)}')
+                THRESHOLD={{ .Values.beyla.memoryRestartThreshold }}
+                if [ "$MEM_USAGE" -gt "$THRESHOLD" ]; then
+                  echo "Beyla memory usage ${MEM_USAGE}MiB exceeds threshold ${THRESHOLD}MiB"
+                  exit 1
+                fi
+                exit 0
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 5
           failureThreshold: 3
         {{- end }}
         volumeMounts:
-        - name: betterstack-data
-          mountPath: /var/lib/better-stack
-        - name: sys-kernel-tracing
-          mountPath: /sys/kernel/tracing
-        - name: sys-kernel-debug
-          mountPath: /sys/kernel/debug
-        - name: sys-kernel-security
-          mountPath: /sys/kernel/security
-          readOnly: true
+          - name: betterstack-data
+            mountPath: /var/lib/better-stack
+          - name: sys-kernel-tracing
+            mountPath: /sys/kernel/tracing
+          - name: sys-kernel-debug
+            mountPath: /sys/kernel/debug
+          - name: sys-kernel-security
+            mountPath: /sys/kernel/security
+            readOnly: true
         resources:
           {{- toYaml .Values.beyla.resources | nindent 10 }}
       {{- end }}
       volumes:
-      # Shared Better Stack data volume
-      - name: betterstack-data
-        emptyDir: {}
-      # Collector volumes
-      - name: cgroup
-        hostPath:
-          path: /sys/fs/cgroup
-      - name: varlog-pods
-        hostPath:
-          path: /var/log/pods
-      - name: docker-containers
-        hostPath:
-          path: /var/lib/docker/containers
-      {{- if .Values.collector.hostMounts.paths }}
-      {{- range $index, $path := .Values.collector.hostMounts.paths }}
-      - name: hostfs-{{ $index }}
-        hostPath:
-          path: {{ $path }}
-          type: ""
-      {{- end }}
-      {{- else }}
-      - name: hostfs
-        hostPath:
-          path: /
-          type: ""
-      {{- end }}
-      {{- if .Values.beyla.enabled }}
-      # Beyla volumes
-      - name: sys-kernel-tracing
-        hostPath:
-          path: /sys/kernel/tracing
-      - name: sys-kernel-debug
-        hostPath:
-          path: /sys/kernel/debug
-      - name: sys-kernel-security
-        hostPath:
-          path: /sys/kernel/security
-      {{- end }}
+        # Shared Better Stack data volume
+        - name: betterstack-data
+          emptyDir: {}
+        # Collector volumes
+        - name: cgroup
+          hostPath:
+            path: /sys/fs/cgroup
+        - name: varlog-pods
+          hostPath:
+            path: /var/log/pods
+        - name: docker-containers
+          hostPath:
+            path: /var/lib/docker/containers
+        {{- if .Values.collector.hostMounts.paths }}
+        {{- range $index, $path := .Values.collector.hostMounts.paths }}
+        - name: hostfs-{{ $index }}
+          hostPath:
+            path: {{ $path }}
+            type: ""
+        {{- end }}
+        {{- else }}
+        - name: hostfs
+          hostPath:
+            path: /
+            type: ""
+        {{- end }}
+        {{- if .Values.beyla.enabled }}
+        # Beyla volumes
+        - name: sys-kernel-tracing
+          hostPath:
+            path: /sys/kernel/tracing
+        - name: sys-kernel-debug
+          hostPath:
+            path: /sys/kernel/debug
+        - name: sys-kernel-security
+          hostPath:
+            path: /sys/kernel/security
+        {{- end }}
       {{- with .Values.collector.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
