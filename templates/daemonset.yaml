@@ -90,8 +90,8 @@ spec:
               - /bin/sh
               - -c
               - if [ -x /var/lib/better-stack/collector/healthcheck.sh ]; then /var/lib/better-stack/collector/healthcheck.sh; else exit 0; fi
-          initialDelaySeconds: 60
-          periodSeconds: 30
+          initialDelaySeconds: 120
+          periodSeconds: 60
           timeoutSeconds: 10
           failureThreshold: 3
         volumeMounts:
