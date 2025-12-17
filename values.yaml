@@ -5,7 +5,7 @@
 # Collector configuration
 collector:
   image:
-    repository: betterstack/collector
+    repository: ghcr.io/betterstackhq/collector
     tag: latest
     pullPolicy: Always
 
@@ -56,7 +56,7 @@ beyla:
   enabled: true
 
   image:
-    repository: betterstack/collector-beyla
+    repository: ghcr.io/betterstackhq/collector-ebpf
     tag: latest
     pullPolicy: Always
 
