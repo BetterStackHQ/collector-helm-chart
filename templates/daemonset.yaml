@@ -68,6 +68,8 @@ spec:
             value: "/host/sys"
           - name: HELM_CHART_VERSION
             value: {{ .Chart.Version | quote }}
+          - name: INSTALLED_AS
+            value: "kubernetes"
         {{- if or (gt (len .Values.collector.envFrom.configMapRefs) 0) (gt (len .Values.collector.envFrom.secretRefs) 0) }}
         envFrom:
           {{- range .Values.collector.envFrom.configMapRefs }}
@@ -156,6 +158,8 @@ spec:
           # Special configuration (these need dynamic template values)
           - name: ENABLE_DOCKERPROBE
             value: {{ .Values.beyla.dockerprobe.enabled | quote }}
+          - name: INSTALLED_AS
+            value: "kubernetes"
         {{- if or (gt (len .Values.beyla.envFrom.configMapRefs) 0) (gt (len .Values.beyla.envFrom.secretRefs) 0) }}
         envFrom:
           {{- range .Values.beyla.envFrom.configMapRefs }}
