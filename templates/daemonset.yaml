@@ -171,13 +171,13 @@ spec:
               name: {{ . | quote }}
           {{- end }}
         {{- end }}
-        {{- if .Values.beyla.memoryRestartThreshold }}
+        {{- if and .Values.beyla.memoryRestartThreshold (ne .Values.beyla.memoryRestartThreshold "") }}
         livenessProbe:
           exec:
             command:
               - /bin/sh
               - -c
-              - if [ -x /var/lib/better-stack/beyla/healthcheck.sh ]; then THRESHOLD={{ .Values.beyla.memoryRestartThreshold }} /var/lib/better-stack/beyla/healthcheck.sh; else exit 0; fi
+              - if [ -x /var/lib/better-stack/beyla/healthcheck.sh ]; then THRESHOLD="{{ .Values.beyla.memoryRestartThreshold }}" /var/lib/better-stack/beyla/healthcheck.sh; else exit 0; fi
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 5
