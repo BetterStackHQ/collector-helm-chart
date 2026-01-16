@@ -70,16 +70,9 @@ spec:
             value: {{ .Chart.Version | quote }}
           - name: INSTALLED_AS
             value: "kubernetes"
-        {{- if or (gt (len .Values.collector.envFrom.configMapRefs) 0) (gt (len .Values.collector.envFrom.secretRefs) 0) }}
+        {{- with .Values.collector.envFrom }}
         envFrom:
-          {{- range .Values.collector.envFrom.configMapRefs }}
-          - configMapRef:
-              name: {{ . | quote }}
-          {{- end }}
-          {{- range .Values.collector.envFrom.secretRefs }}
-          - secretRef:
-              name: {{ . | quote }}
-          {{- end }}
+          {{- toYaml . | nindent 10 }}
         {{- end }}
         ports:
           - name: otlp
@@ -160,16 +153,9 @@ spec:
             value: {{ .Values.beyla.dockerprobe.enabled | quote }}
           - name: INSTALLED_AS
             value: "kubernetes"
-        {{- if or (gt (len .Values.beyla.envFrom.configMapRefs) 0) (gt (len .Values.beyla.envFrom.secretRefs) 0) }}
+        {{- with .Values.beyla.envFrom }}
         envFrom:
-          {{- range .Values.beyla.envFrom.configMapRefs }}
-          - configMapRef:
-              name: {{ . | quote }}
-          {{- end }}
-          {{- range .Values.beyla.envFrom.secretRefs }}
-          - secretRef:
-              name: {{ . | quote }}
-          {{- end }}
+          {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- if .Values.beyla.memoryRestartThreshold }}
         livenessProbe:

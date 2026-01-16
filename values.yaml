@@ -16,13 +16,14 @@ collector:
     CLUSTER_COLLECTOR: ""
     VECTOR_LOG_FORMAT: "json"
 
-  # Environment variables from ConfigMaps and Secrets
-  # Note: Explicit env entries in collector.env take precedence over envFrom sources
-  envFrom:
-    # List of ConfigMap names to load environment variables from
-    configMapRefs: []
-    # List of Secret names to load environment variables from (e.g., ["collector-secret"])
-    secretRefs: []
+  # Environment variables from ConfigMaps and Secrets (standard Kubernetes envFrom format)
+  # Example:
+  #   envFrom:
+  #     - secretRef:
+  #         name: collector-secrets
+  #     - configMapRef:
+  #         name: collector-config
+  envFrom: []
 
   # Resource limits and requests
   resources:
@@ -66,13 +67,12 @@ beyla:
     # Too low might cause GC to run too often and increase CPU usage
     GOMEMLIMIT: 1400MiB
 
-  # Environment variables from ConfigMaps and Secrets
-  # Note: Explicit env entries in beyla.env take precedence over envFrom sources
-  envFrom:
-    # List of ConfigMap names to load environment variables from
-    configMapRefs: []
-    # List of Secret names to load environment variables from
-    secretRefs: []
+  # Environment variables from ConfigMaps and Secrets (standard Kubernetes envFrom format)
+  # Example:
+  #   envFrom:
+  #     - secretRef:
+  #         name: beyla-secrets
+  envFrom: []
 
   # Docker probe configuration
   dockerprobe:
