@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Lint chart
+        run: helm lint . --set collector.env.COLLECTOR_SECRET=test123
+
+      - name: Test template with COLLECTOR_SECRET
+        run: helm template test . --set collector.env.COLLECTOR_SECRET=test123
+
+      - name: Test template with envFrom
+        run: helm template test . --set-json 'collector.envFrom=[{"secretRef":{"name":"my-secret"}}]'
+
+      - name: Test validation fails without secret
+        run: |
+          if helm template test . 2>&1; then
+            echo "Expected validation to fail but it passed"
+            exit 1
+          fi
