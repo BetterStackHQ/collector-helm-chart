@@ -11,7 +11,7 @@ collector:
 
   # Environment variables
   env:
-    COLLECTOR_SECRET: ""  # Required: Your collector secret (leave empty if you set it via envFrom.secretRefs)
+    COLLECTOR_SECRET: ""  # Required: Your collector secret (leave empty if using envFrom)
     BASE_URL: "https://telemetry.betterstack.com"
     CLUSTER_COLLECTOR: ""
     VECTOR_LOG_FORMAT: "json"
