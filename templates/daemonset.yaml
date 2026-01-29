@@ -179,6 +179,9 @@ spec:
           - name: sys-kernel-security
             mountPath: /sys/kernel/security
             readOnly: true
+          - name: cgroup
+            mountPath: /sys/fs/cgroup
+            readOnly: true
         resources:
           {{- toYaml .Values.beyla.resources | nindent 10 }}
       {{- end }}
