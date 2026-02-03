@@ -70,3 +70,46 @@ Validate required values
 {{- fail "COLLECTOR_SECRET is required. Please provide your Better Stack collector secret either via collector.env.COLLECTOR_SECRET or through collector.envFrom (standard Kubernetes envFrom format). Find your collector secret here: https://telemetry.betterstack.com/team/0/collectors." }}
 {{- end }}
 {{- end }}
+
+{{/*
+eBPF config - supports both 'ebpf' (preferred) and 'beyla' (deprecated) keys
+Returns the effective eBPF configuration as YAML
+*/}}
+{{- define "better-stack-collector.ebpf" -}}
+{{- if .Values.ebpf -}}
+{{- .Values.ebpf | toYaml -}}
+{{- else -}}
+{{- .Values.beyla | toYaml -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+eBPF security context - supports both 'ebpf' (preferred) and 'beyla' (deprecated) keys
+*/}}
+{{- define "better-stack-collector.ebpf.securityContext" -}}
+{{- if .Values.securityContext.ebpf -}}
+{{- .Values.securityContext.ebpf | toYaml -}}
+{{- else -}}
+{{- .Values.securityContext.beyla | toYaml -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Check if eBPF is enabled - supports both 'ebpf' and 'beyla' keys
+*/}}
+{{- define "better-stack-collector.ebpf.enabled" -}}
+{{- if .Values.ebpf -}}
+{{- .Values.ebpf.enabled -}}
+{{- else -}}
+{{- .Values.beyla.enabled -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Check if using deprecated 'beyla' key
+*/}}
+{{- define "better-stack-collector.ebpf.usingDeprecatedKey" -}}
+{{- if and (not .Values.ebpf) .Values.beyla -}}
+true
+{{- end -}}
+{{- end -}}

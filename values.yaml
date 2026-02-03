@@ -52,7 +52,31 @@ collector:
     # Example: ["/var/www/custom", "/var/lib/something"]
     paths: []
 
-# Beyla configuration for eBPF tracing
+# eBPF tracing configuration
+# Note: 'ebpf' is the preferred key. 'beyla' is deprecated but still supported.
+# If both are specified, 'ebpf' takes precedence.
+#
+# ebpf:
+#   enabled: true
+#   image:
+#     repository: ghcr.io/betterstackhq/collector-ebpf
+#     tag: latest
+#     pullPolicy: Always
+#   env:
+#     GOMEMLIMIT: 1400MiB
+#   envFrom: []
+#   dockerprobe:
+#     enabled: false
+#   resources:
+#     limits:
+#       cpu: 1000m
+#       memory: 3000Mi
+#     requests:
+#       cpu: 800m
+#       memory: 1000Mi
+#   memoryRestartThreshold: 1450
+
+# DEPRECATED: Use 'ebpf' instead. This key will be removed in a future release.
 beyla:
   enabled: true
 
@@ -61,35 +85,26 @@ beyla:
     tag: latest
     pullPolicy: Always
 
-  # Environment variables
   env:
-    # Makes garbage collection more aggressive once memory is over this threshold
-    # Too low might cause GC to run too often and increase CPU usage
     GOMEMLIMIT: 1400MiB
 
-  # Environment variables from ConfigMaps and Secrets (standard Kubernetes envFrom format)
   # Example:
   #   envFrom:
   #     - secretRef:
-  #         name: beyla-secrets
+  #         name: ebpf-secrets
   envFrom: []
 
-  # Docker probe configuration
   dockerprobe:
     enabled: false
 
-  # Resource limits and requests
   resources:
     limits:
       cpu: 1000m
-      memory: 3000Mi # Beyla spikes to about 2GiB after start up
+      memory: 3000Mi
     requests:
       cpu: 800m
-      memory: 1000Mi # Then drops to about 200-500MiB depending on cluster size
+      memory: 1000Mi
 
-  # Memory restart threshold in MiB (optional)
-  # If set, beyla will restart when memory usage exceeds this value
-  # Should be set below the memory limit to prevent OOM kills
   memoryRestartThreshold: 1450
 
 # RBAC configuration
@@ -101,13 +116,17 @@ rbac:
 
 # Security context for pods
 securityContext:
-  # For collector deployment
   collector:
     runAsNonRoot: false
     runAsUser: 0
     fsGroup: 0
 
-  # For Beyla daemonset (requires privileged access)
+  # For eBPF container (requires privileged access)
+  # Note: 'ebpf' is preferred. 'beyla' is deprecated but still supported.
+  # ebpf:
+  #   privileged: true
+
+  # DEPRECATED: Use 'securityContext.ebpf' instead
   beyla:
     privileged: true
 

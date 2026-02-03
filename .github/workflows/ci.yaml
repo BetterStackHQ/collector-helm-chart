@@ -31,3 +31,95 @@ jobs:
             echo "Expected validation to fail but it passed"
             exit 1
           fi
+
+      - name: Test deprecated beyla key still works
+        run: |
+          output=$(helm template test . --set collector.env.COLLECTOR_SECRET=test123)
+          if ! echo "$output" | grep -q "name: ebpf"; then
+            echo "Expected ebpf container to be present when using beyla key"
+            exit 1
+          fi
+
+      - name: Test new ebpf key works
+        run: |
+          output=$(helm template test . \
+            --set collector.env.COLLECTOR_SECRET=test123 \
+            --set ebpf.enabled=true \
+            --set ebpf.image.repository=ghcr.io/betterstackhq/collector-ebpf \
+            --set ebpf.image.tag=v1.0.0 \
+            --set ebpf.image.pullPolicy=Always \
+            --set 'ebpf.env.GOMEMLIMIT=1400MiB' \
+            --set ebpf.dockerprobe.enabled=false \
+            --set ebpf.memoryRestartThreshold=1450 \
+            --set-json 'ebpf.resources={"limits":{"cpu":"1000m","memory":"3000Mi"},"requests":{"cpu":"800m","memory":"1000Mi"}}' \
+            --set securityContext.ebpf.privileged=true)
+          if ! echo "$output" | grep -q "name: ebpf"; then
+            echo "Expected ebpf container when using ebpf key"
+            exit 1
+          fi
+          if ! echo "$output" | grep -q "v1.0.0"; then
+            echo "Expected custom image tag v1.0.0"
+            exit 1
+          fi
+
+      - name: Test ebpf key takes precedence over beyla
+        run: |
+          output=$(helm template test . \
+            --set collector.env.COLLECTOR_SECRET=test123 \
+            --set beyla.image.tag=old-tag \
+            --set ebpf.enabled=true \
+            --set ebpf.image.repository=ghcr.io/betterstackhq/collector-ebpf \
+            --set ebpf.image.tag=new-tag \
+            --set ebpf.image.pullPolicy=Always \
+            --set 'ebpf.env.GOMEMLIMIT=1400MiB' \
+            --set ebpf.dockerprobe.enabled=false \
+            --set ebpf.memoryRestartThreshold=1450 \
+            --set-json 'ebpf.resources={"limits":{"cpu":"1000m","memory":"3000Mi"},"requests":{"cpu":"800m","memory":"1000Mi"}}' \
+            --set securityContext.ebpf.privileged=true)
+          if echo "$output" | grep -q "old-tag"; then
+            echo "Expected ebpf key to take precedence, but found old-tag from beyla"
+            exit 1
+          fi
+          if ! echo "$output" | grep -q "new-tag"; then
+            echo "Expected new-tag from ebpf key"
+            exit 1
+          fi
+
+      - name: Test envFrom with beyla key (backward compat)
+        run: |
+          output=$(helm template test . \
+            --set collector.env.COLLECTOR_SECRET=test123 \
+            --set-json 'beyla.envFrom=[{"secretRef":{"name":"beyla-secret"}}]')
+          if ! echo "$output" | grep -q "beyla-secret"; then
+            echo "Expected beyla-secret in envFrom"
+            exit 1
+          fi
+
+      - name: Test envFrom with ebpf key
+        run: |
+          output=$(helm template test . \
+            --set collector.env.COLLECTOR_SECRET=test123 \
+            --set ebpf.enabled=true \
+            --set ebpf.image.repository=ghcr.io/betterstackhq/collector-ebpf \
+            --set ebpf.image.tag=latest \
+            --set ebpf.image.pullPolicy=Always \
+            --set 'ebpf.env.GOMEMLIMIT=1400MiB' \
+            --set ebpf.dockerprobe.enabled=false \
+            --set ebpf.memoryRestartThreshold=1450 \
+            --set-json 'ebpf.resources={"limits":{"cpu":"1000m","memory":"3000Mi"},"requests":{"cpu":"800m","memory":"1000Mi"}}' \
+            --set securityContext.ebpf.privileged=true \
+            --set-json 'ebpf.envFrom=[{"secretRef":{"name":"ebpf-secret"}}]')
+          if ! echo "$output" | grep -q "ebpf-secret"; then
+            echo "Expected ebpf-secret in envFrom"
+            exit 1
+          fi
+
+      - name: Test ebpf disabled
+        run: |
+          output=$(helm template test . \
+            --set collector.env.COLLECTOR_SECRET=test123 \
+            --set beyla.enabled=false)
+          if echo "$output" | grep -q "name: ebpf"; then
+            echo "Expected ebpf container to be absent when disabled"
+            exit 1
+          fi
