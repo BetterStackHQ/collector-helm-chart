@@ -47,6 +47,9 @@ collector:
   # By default, mounts the entire host root filesystem at /host (read-only)
   # You can specify specific paths to mount instead. Each path will be mounted
   # under /host with the same path structure (e.g., /var/www -> /host/var/www)
+  # Additional ports to expose via hostPort (e.g., [4317, 4318] for OTLP)
+  exposePorts: []
+
   hostMounts:
     # Array of host paths to mount. If empty, mounts root filesystem
     # Example: ["/var/www/custom", "/var/lib/something"]

@@ -79,6 +79,12 @@ spec:
             containerPort: 34320
             hostPort: 34320
             protocol: TCP
+          {{- range .Values.collector.exposePorts }}
+          - name: expose-{{ . }}
+            containerPort: {{ . }}
+            hostPort: {{ . }}
+            protocol: TCP
+          {{- end }}
         livenessProbe:
           exec:
             command:

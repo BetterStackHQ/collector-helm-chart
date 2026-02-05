@@ -25,6 +25,22 @@ jobs:
       - name: Test template with envFrom
         run: helm template test . --set-json 'collector.envFrom=[{"secretRef":{"name":"my-secret"}}]'
 
+      - name: Test template with exposePorts
+        run: |
+          output=$(helm template test . --set collector.env.COLLECTOR_SECRET=test123 --set 'collector.exposePorts={4317,4318}')
+          echo "$output" | grep -q 'hostPort: 4317' || { echo "Missing hostPort 4317"; exit 1; }
+          echo "$output" | grep -q 'hostPort: 4318' || { echo "Missing hostPort 4318"; exit 1; }
+          echo "$output" | grep -q 'containerPort: 4317' || { echo "Missing containerPort 4317"; exit 1; }
+          echo "$output" | grep -q 'containerPort: 4318' || { echo "Missing containerPort 4318"; exit 1; }
+
+      - name: Test template without exposePorts has no extra ports
+        run: |
+          output=$(helm template test . --set collector.env.COLLECTOR_SECRET=test123)
+          if echo "$output" | grep -q 'expose-'; then
+            echo "Unexpected exposed ports when exposePorts is not set"
+            exit 1
+          fi
+
       - name: Test validation fails without secret
         run: |
           if helm template test . 2>&1; then
