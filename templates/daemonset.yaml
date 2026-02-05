@@ -70,6 +70,14 @@ spec:
             value: {{ .Chart.Version | quote }}
           - name: INSTALLED_AS
             value: "kubernetes"
+          {{- if .Values.collectOtel.grpcPort }}
+          - name: COLLECT_OTEL_GRPC_PORT
+            value: {{ .Values.collectOtel.grpcPort | quote }}
+          {{- end }}
+          {{- if .Values.collectOtel.httpPort }}
+          - name: COLLECT_OTEL_HTTP_PORT
+            value: {{ .Values.collectOtel.httpPort | quote }}
+          {{- end }}
         {{- with .Values.collector.envFrom }}
         envFrom:
           {{- toYaml . | nindent 10 }}
@@ -79,10 +87,16 @@ spec:
             containerPort: 34320
             hostPort: 34320
             protocol: TCP
-          {{- range .Values.collector.exposePorts }}
-          - name: expose-{{ . }}
-            containerPort: {{ . }}
-            hostPort: {{ . }}
+          {{- if .Values.collectOtel.grpcPort }}
+          - name: otel-grpc
+            containerPort: {{ .Values.collectOtel.grpcPort }}
+            hostPort: {{ .Values.collectOtel.grpcPort }}
+            protocol: TCP
+          {{- end }}
+          {{- if .Values.collectOtel.httpPort }}
+          - name: otel-http
+            containerPort: {{ .Values.collectOtel.httpPort }}
+            hostPort: {{ .Values.collectOtel.httpPort }}
             protocol: TCP
           {{- end }}
         livenessProbe:
