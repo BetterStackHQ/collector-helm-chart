@@ -52,6 +52,10 @@ collector:
     # Example: ["/var/www/custom", "/var/lib/something"]
     paths: []
 
+collectOtel:
+  grpcPort: ""
+  httpPort: ""
+
 # Beyla configuration for eBPF tracing
 beyla:
   enabled: true
