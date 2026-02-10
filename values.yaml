@@ -52,6 +52,10 @@ collector:
     # Example: ["/var/www/custom", "/var/lib/something"]
     paths: []
 
+collectOtel:
+  grpcPort: ""
+  httpPort: ""
+
 # eBPF tracing configuration
 # Note: 'ebpf' is the preferred key. 'beyla' is deprecated but still supported.
 # If both are specified, 'ebpf' takes precedence.
