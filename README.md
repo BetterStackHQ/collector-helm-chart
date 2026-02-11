@@ -18,14 +18,14 @@ Better Stack collector is the easiest and recommended way of integrating Better 
 
 The Better Stack collector runs as a DaemonSet with two containers per node:
 - **Collector container**: 512MB-2GB memory
-- **Beyla container** (eBPF tracing): 1.5GB memory reserved
+- **eBPF container** (eBPF tracing): 1.5GB memory reserved
 
 **Minimum recommended node specifications:**
 - 4GB total memory per node
 - 2GB available memory after system and other critical workloads
 
 **Important notes:**
-- The Beyla container requires 1.5GB memory reservation to ensure stable eBPF-based tracing
+- The eBPF container requires 1.5GB memory reservation to ensure stable eBPF-based tracing
 - In memory-constrained or heavily overcommitted clusters, the collector may experience restarts
 - Both containers are configured with Guaranteed QoS class to prevent eviction under memory pressure
 

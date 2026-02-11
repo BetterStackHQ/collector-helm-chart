@@ -1,0 +1,25 @@
+Better Stack Collector has been deployed.
+
+{{- if include "better-stack-collector.ebpf.usingDeprecatedKey" . }}
+
+WARNING: You are using the deprecated 'beyla' configuration key.
+Please migrate to 'ebpf' in your values.yaml:
+
+  Before (deprecated):
+    beyla:
+      enabled: true
+      ...
+    securityContext:
+      beyla:
+        privileged: true
+
+  After (preferred):
+    ebpf:
+      enabled: true
+      ...
+    securityContext:
+      ebpf:
+        privileged: true
+
+The 'beyla' key will be removed in a future release.
+{{- end }}
