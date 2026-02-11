@@ -199,6 +199,17 @@ spec:
           - name: cgroup
             mountPath: /sys/fs/cgroup
             readOnly: true
+          {{- if .Values.collector.hostMounts.paths }}
+          {{- range $index, $path := .Values.collector.hostMounts.paths }}
+          - name: hostfs-{{ $index }}
+            mountPath: /host{{ $path }}
+            readOnly: true
+          {{- end }}
+          {{- else }}
+          - name: hostfs
+            mountPath: /host
+            readOnly: true
+          {{- end }}
         resources:
           {{- toYaml $ebpf.resources | nindent 10 }}
       {{- end }}
