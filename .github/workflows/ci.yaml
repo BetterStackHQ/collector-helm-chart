@@ -145,3 +145,18 @@ jobs:
             echo "Expected ebpf container to be absent when disabled"
             exit 1
           fi
+
+      - name: Test partial ebpf override (only resources) still enables ebpf
+        run: |
+          output=$(helm template test . \
+            --set collector.env.COLLECTOR_SECRET=test123 \
+            --set ebpf.resources.requests.cpu=400m \
+            --set ebpf.resources.limits.cpu=800m)
+          if ! echo "$output" | grep -q "name: ebpf"; then
+            echo "Expected ebpf container when setting ebpf.resources without ebpf.enabled"
+            exit 1
+          fi
+          if ! echo "$output" | grep -q "ghcr.io/betterstackhq/collector-ebpf"; then
+            echo "Expected default ebpf image from beyla defaults"
+            exit 1
+          fi
