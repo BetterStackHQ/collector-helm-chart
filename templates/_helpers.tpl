@@ -72,12 +72,13 @@ Validate required values
 {{- end }}
 
 {{/*
-eBPF config - supports both 'ebpf' (preferred) and 'beyla' (deprecated) keys
-Returns the effective eBPF configuration as YAML
+eBPF config - supports both 'ebpf' (preferred) and 'beyla' (deprecated) keys.
+When 'ebpf' is partially set (e.g. only resources), merges over 'beyla' defaults
+so that image, env, etc. are still present.
 */}}
 {{- define "better-stack-collector.ebpf" -}}
 {{- if .Values.ebpf -}}
-{{- .Values.ebpf | toYaml -}}
+{{- mustMergeOverwrite (deepCopy .Values.beyla) .Values.ebpf | toYaml -}}
 {{- else -}}
 {{- .Values.beyla | toYaml -}}
 {{- end -}}
@@ -95,14 +96,13 @@ eBPF security context - supports both 'ebpf' (preferred) and 'beyla' (deprecated
 {{- end -}}
 
 {{/*
-Check if eBPF is enabled - supports both 'ebpf' and 'beyla' keys
+Check if eBPF is enabled - supports both 'ebpf' and 'beyla' keys.
+Uses the merged config so that partially setting 'ebpf' (e.g. only resources)
+doesn't accidentally disable eBPF by shadowing the 'beyla.enabled' default.
 */}}
 {{- define "better-stack-collector.ebpf.enabled" -}}
-{{- if .Values.ebpf -}}
-{{- .Values.ebpf.enabled -}}
-{{- else -}}
-{{- .Values.beyla.enabled -}}
-{{- end -}}
+{{- $ebpf := include "better-stack-collector.ebpf" . | fromYaml -}}
+{{- $ebpf.enabled -}}
 {{- end -}}
 
 {{/*
