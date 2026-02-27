@@ -105,26 +105,26 @@ To the standard Kubernetes envFrom format:
 {{- end }}
 
 {{/*
-eBPF config - supports both 'ebpf' (preferred) and 'beyla' (deprecated) keys.
-When 'ebpf' is partially set (e.g. only resources), merges over 'beyla' defaults
-so that image, env, etc. are still present.
+eBPF config - defaults live under 'ebpf'. The deprecated 'beyla' key is still
+supported: when set, its values are merged over the ebpf defaults so that
+existing beyla-based installs keep working.
 */}}
 {{- define "better-stack-collector.ebpf" -}}
-{{- if .Values.ebpf -}}
-{{- mustMergeOverwrite (deepCopy .Values.beyla) .Values.ebpf | toYaml -}}
+{{- if .Values.beyla -}}
+{{- mustMergeOverwrite (deepCopy .Values.ebpf) .Values.beyla | toYaml -}}
 {{- else -}}
-{{- .Values.beyla | toYaml -}}
+{{- .Values.ebpf | toYaml -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-eBPF security context - supports both 'ebpf' (preferred) and 'beyla' (deprecated) keys
+eBPF security context - defaults under 'ebpf', deprecated 'beyla' still supported
 */}}
 {{- define "better-stack-collector.ebpf.securityContext" -}}
-{{- if .Values.securityContext.ebpf -}}
-{{- .Values.securityContext.ebpf | toYaml -}}
-{{- else -}}
+{{- if .Values.securityContext.beyla -}}
 {{- .Values.securityContext.beyla | toYaml -}}
+{{- else -}}
+{{- .Values.securityContext.ebpf | toYaml -}}
 {{- end -}}
 {{- end -}}
 
@@ -139,10 +139,12 @@ doesn't accidentally disable eBPF by shadowing the 'beyla.enabled' default.
 {{- end -}}
 
 {{/*
-Check if using deprecated 'beyla' key
+Check if using deprecated 'beyla' key.
+Since defaults now live under 'ebpf', .Values.beyla is only truthy when
+the user explicitly passes beyla values.
 */}}
 {{- define "better-stack-collector.ebpf.usingDeprecatedKey" -}}
-{{- if and (not .Values.ebpf) .Values.beyla -}}
+{{- if .Values.beyla -}}
 true
 {{- end -}}
 {{- end -}}

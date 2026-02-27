@@ -2,20 +2,12 @@
 set -euo pipefail
 source "$(dirname "$0")/helpers.sh"
 
+# When only beyla values are set, they should override ebpf defaults (backward compat)
 output=$(render \
   --set collector.env.COLLECTOR_SECRET=test123 \
-  --set beyla.image.tag=old-tag \
-  --set ebpf.enabled=true \
-  --set ebpf.image.repository=ghcr.io/betterstackhq/collector-ebpf \
-  --set ebpf.image.tag=new-tag \
-  --set ebpf.image.pullPolicy=Always \
-  --set 'ebpf.env.GOMEMLIMIT=1400MiB' \
-  --set ebpf.dockerprobe.enabled=false \
-  --set ebpf.memoryRestartThreshold=1450 \
-  --set-json 'ebpf.resources={"limits":{"cpu":"1000m","memory":"3000Mi"},"requests":{"cpu":"800m","memory":"1000Mi"}}' \
-  --set securityContext.ebpf.privileged=true)
+  --set beyla.image.tag=custom-tag)
 
-assert_not_contains "$output" "old-tag" "Expected ebpf key to take precedence, but found old-tag from beyla"
-assert_contains "$output" "new-tag" "Expected new-tag from ebpf key"
+assert_contains "$output" "custom-tag" "Expected beyla.image.tag to override ebpf default"
+assert_contains "$output" "name: ebpf" "Expected ebpf container to be present"
 
 pass

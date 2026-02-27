@@ -57,31 +57,7 @@ collectOtel:
   httpPort: ""
 
 # eBPF tracing configuration
-# Note: 'ebpf' is the preferred key. 'beyla' is deprecated but still supported.
-# If both are specified, 'ebpf' takes precedence.
-#
-# ebpf:
-#   enabled: true
-#   image:
-#     repository: ghcr.io/betterstackhq/collector-ebpf
-#     tag: latest
-#     pullPolicy: Always
-#   env:
-#     GOMEMLIMIT: 1400MiB
-#   envFrom: []
-#   dockerprobe:
-#     enabled: false
-#   resources:
-#     limits:
-#       cpu: 1000m
-#       memory: 3000Mi
-#     requests:
-#       cpu: 800m
-#       memory: 1000Mi
-#   memoryRestartThreshold: 1450
-
-# DEPRECATED: Use 'ebpf' instead. This key will be removed in a future release.
-beyla:
+ebpf:
   enabled: true
 
   image:
@@ -111,6 +87,10 @@ beyla:
 
   memoryRestartThreshold: 1450
 
+# DEPRECATED: Use 'ebpf' instead. This key will be removed in a future release.
+# If you have existing values under 'beyla', they will still work but you'll
+# see a deprecation warning. Migrate your values to the 'ebpf' key above.
+
 # RBAC configuration
 rbac:
   # Create service account
@@ -126,13 +106,12 @@ securityContext:
     fsGroup: 0
 
   # For eBPF container (requires privileged access)
-  # Note: 'ebpf' is preferred. 'beyla' is deprecated but still supported.
-  # ebpf:
-  #   privileged: true
+  ebpf:
+    privileged: true
 
   # DEPRECATED: Use 'securityContext.ebpf' instead
-  beyla:
-    privileged: true
+  # beyla:
+  #   privileged: true
 
 # Image pull secrets
 imagePullSecrets: []
