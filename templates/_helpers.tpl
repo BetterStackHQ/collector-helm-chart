@@ -66,6 +66,39 @@ Create the name of the service account to use
 Validate required values
 */}}
 {{- define "better-stack-collector.validateValues" -}}
+{{- if and .Values.collector.envFrom (eq (kindOf .Values.collector.envFrom) "map") }}
+{{- fail `Legacy envFrom format detected in collector.envFrom. The chart no longer supports the secretRefs/configMapRefs format.
+
+Please update your values from:
+
+    collector:
+      envFrom:
+        secretRefs: ["my-secret"]
+
+To the standard Kubernetes envFrom format:
+
+    collector:
+      envFrom:
+        - secretRef:
+            name: my-secret` }}
+{{- end }}
+{{- $ebpf := include "better-stack-collector.ebpf" . | fromYaml -}}
+{{- if and $ebpf.envFrom (eq (kindOf $ebpf.envFrom) "map") }}
+{{- fail `Legacy envFrom format detected in ebpf.envFrom. The chart no longer supports the secretRefs/configMapRefs format.
+
+Please update your values from:
+
+    ebpf:
+      envFrom:
+        secretRefs: ["my-secret"]
+
+To the standard Kubernetes envFrom format:
+
+    ebpf:
+      envFrom:
+        - secretRef:
+            name: my-secret` }}
+{{- end }}
 {{- if not (or .Values.collector.env.COLLECTOR_SECRET (gt (len .Values.collector.envFrom) 0)) }}
 {{- fail "COLLECTOR_SECRET is required. Please provide your Better Stack collector secret either via collector.env.COLLECTOR_SECRET or through collector.envFrom (standard Kubernetes envFrom format). Find your collector secret here: https://telemetry.betterstack.com/team/0/collectors." }}
 {{- end }}
