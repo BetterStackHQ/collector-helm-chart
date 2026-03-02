@@ -2,8 +2,11 @@ Better Stack Collector has been deployed.
 
 {{- if include "better-stack-collector.ebpf.usingDeprecatedKey" . }}
 
-WARNING: You are using the deprecated 'beyla' configuration key.
-Please migrate to 'ebpf' in your values.yaml:
+WARNING: Your release contains values under the deprecated 'beyla' key.
+This may happen because you explicitly set 'beyla' values, or because
+'helm upgrade --reuse-values' carried them over from an older chart version.
+
+Please migrate your eBPF configuration to the 'ebpf' key:
 
   Before (deprecated):
     beyla:
@@ -20,6 +23,9 @@ Please migrate to 'ebpf' in your values.yaml:
     securityContext:
       ebpf:
         privileged: true
+
+If you use --reuse-values, switch to --reset-values with an explicit values
+file to avoid carrying over the old 'beyla' key.
 
 The 'beyla' key will be removed in a future release.
 {{- end }}
