@@ -1,0 +1,26 @@
+{{- if or .Values.collectOtel.grpcPort .Values.collectOtel.httpPort }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "better-stack-collector.fullname" . }}-otlp
+  labels:
+    {{- include "better-stack-collector.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  internalTrafficPolicy: Local
+  selector:
+    {{- include "better-stack-collector.selectorLabels" . | nindent 4 }}
+  ports:
+    {{- if .Values.collectOtel.grpcPort }}
+    - name: otel-grpc
+      port: {{ .Values.collectOtel.grpcPort }}
+      targetPort: otel-grpc
+      protocol: TCP
+    {{- end }}
+    {{- if .Values.collectOtel.httpPort }}
+    - name: otel-http
+      port: {{ .Values.collectOtel.httpPort }}
+      targetPort: otel-http
+      protocol: TCP
+    {{- end }}
+{{- end }}
