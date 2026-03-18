@@ -43,6 +43,12 @@ collector:
   # Affinity
   affinity: {}
 
+  livenessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 60
+    timeoutSeconds: 10
+    failureThreshold: 3
+
   # Host filesystem mount configuration
   # By default, mounts the entire host root filesystem at /host (read-only)
   # You can specify specific paths to mount instead. Each path will be mounted
@@ -84,6 +90,12 @@ ebpf:
     requests:
       cpu: 800m
       memory: 1000Mi
+
+  livenessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 60
+    timeoutSeconds: 10
+    failureThreshold: 3
 
   memoryRestartThreshold: 1450
 

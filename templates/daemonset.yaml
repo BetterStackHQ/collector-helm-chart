@@ -105,10 +105,10 @@ spec:
               - /bin/sh
               - -c
               - if [ -x /var/lib/better-stack/collector/healthcheck.sh ]; then /var/lib/better-stack/collector/healthcheck.sh; else exit 0; fi
-          initialDelaySeconds: 120
-          periodSeconds: 60
-          timeoutSeconds: 10
-          failureThreshold: 3
+          initialDelaySeconds: {{ .Values.collector.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.collector.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.collector.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.collector.livenessProbe.failureThreshold }}
         volumeMounts:
           - name: betterstack-data
             mountPath: /var/lib/better-stack
@@ -181,10 +181,10 @@ spec:
               - /bin/sh
               - -c
               - if [ -x /var/lib/better-stack/ebpf/healthcheck.sh ]; then THRESHOLD="{{ $ebpf.memoryRestartThreshold }}" /var/lib/better-stack/ebpf/healthcheck.sh; else exit 0; fi
-          initialDelaySeconds: 120
-          periodSeconds: 60
-          timeoutSeconds: 10
-          failureThreshold: 3
+          initialDelaySeconds: {{ $ebpf.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ $ebpf.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ $ebpf.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ $ebpf.livenessProbe.failureThreshold }}
         {{- end }}
         volumeMounts:
           - name: betterstack-data
