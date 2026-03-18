@@ -11,7 +11,7 @@ collector:
 
   # Environment variables
   env:
-    COLLECTOR_SECRET: ""  # Required: Your collector secret (leave empty if using envFrom)
+    COLLECTOR_SECRET: "" # Required: Your collector secret (leave empty if using envFrom)
     BASE_URL: "https://telemetry.betterstack.com"
     CLUSTER_COLLECTOR: ""
     VECTOR_LOG_FORMAT: "json"
@@ -44,10 +44,10 @@ collector:
   affinity: {}
 
   livenessProbe:
-    initialDelaySeconds: 120
+    initialDelaySeconds: 180
     periodSeconds: 60
     timeoutSeconds: 10
-    failureThreshold: 3
+    failureThreshold: 5
 
   # Host filesystem mount configuration
   # By default, mounts the entire host root filesystem at /host (read-only)
@@ -136,4 +136,3 @@ commonAnnotations: {}
 
 # Priority class (optional)
 # priorityClassName: ""
-
