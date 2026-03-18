@@ -11,7 +11,7 @@ collector:
 
   # Environment variables
   env:
-    COLLECTOR_SECRET: ""  # Required: Your collector secret (leave empty if using envFrom)
+    COLLECTOR_SECRET: "" # Required: Your collector secret (leave empty if using envFrom)
     BASE_URL: "https://telemetry.betterstack.com"
     CLUSTER_COLLECTOR: ""
     VECTOR_LOG_FORMAT: "json"
@@ -42,6 +42,12 @@ collector:
 
   # Affinity
   affinity: {}
+
+  livenessProbe:
+    initialDelaySeconds: 180
+    periodSeconds: 60
+    timeoutSeconds: 10
+    failureThreshold: 5
 
   # Host filesystem mount configuration
   # By default, mounts the entire host root filesystem at /host (read-only)
@@ -85,6 +91,12 @@ ebpf:
       cpu: 800m
       memory: 1000Mi
 
+  livenessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 60
+    timeoutSeconds: 10
+    failureThreshold: 3
+
   memoryRestartThreshold: 1450
 
 # DEPRECATED: Use 'ebpf' instead. This key will be removed in a future release.
@@ -124,4 +136,3 @@ commonAnnotations: {}
 
 # Priority class (optional)
 # priorityClassName: ""
-
