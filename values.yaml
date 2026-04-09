@@ -110,6 +110,12 @@ rbac:
   # Service account name
   serviceAccountName: better-stack-collector
 
+# set default ndots to prevent unnecessary DNS resolve calls
+dnsConfig:
+  options:
+    - name: ndots
+      value: "2"
+
 # Security context for pods
 securityContext:
   collector:
