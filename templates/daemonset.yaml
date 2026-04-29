@@ -35,8 +35,14 @@ spec:
       containers:
       # Collector container (non-privileged)
       - name: collector
-        image: "{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag | default .Chart.AppVersion }}"
-        imagePullPolicy: {{ .Values.collector.image.pullPolicy }}
+        {{- with .Values.collector.image }}
+        {{- if .digest }}
+        image: "{{ .repository }}@{{ .digest }}"
+        {{- else }}
+        image: "{{ .repository }}:{{ .tag | default $.Chart.AppVersion }}"
+        {{- end }}
+        imagePullPolicy: {{ .pullPolicy }}
+        {{- end }}
         securityContext:
           runAsNonRoot: false
           runAsUser: 0
@@ -141,8 +147,14 @@ spec:
       {{- if eq (include "better-stack-collector.ebpf.enabled" .) "true" }}
       {{- $ebpf := include "better-stack-collector.ebpf" . | fromYaml }}
       - name: ebpf
-        image: "{{ $ebpf.image.repository }}:{{ $ebpf.image.tag }}"
-        imagePullPolicy: {{ $ebpf.image.pullPolicy }}
+        {{- with $ebpf.image }}
+        {{- if .digest }}
+        image: "{{ .repository }}@{{ .digest }}"
+        {{- else }}
+        image: "{{ .repository }}:{{ .tag }}"
+        {{- end }}
+        imagePullPolicy: {{ .pullPolicy }}
+        {{- end }}
         securityContext:
           {{- include "better-stack-collector.ebpf.securityContext" . | nindent 10 }}
         env:

@@ -7,6 +7,7 @@ collector:
   image:
     repository: ghcr.io/betterstackhq/collector
     tag: latest
+    digest: ""
     pullPolicy: Always
 
   # Environment variables
@@ -69,6 +70,7 @@ ebpf:
   image:
     repository: ghcr.io/betterstackhq/collector-ebpf
     tag: latest
+    digest: ""
     pullPolicy: Always
 
   env:
