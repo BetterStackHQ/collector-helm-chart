@@ -44,6 +44,20 @@ collector:
   # Affinity
   affinity: {}
 
+  # DaemonSet update strategy. When left empty, Kubernetes applies its default
+  # for DaemonSets — RollingUpdate with maxUnavailable: 1 and maxSurge: 0 —
+  # which rolls one pod at a time and serializes the rollout on large clusters
+  # (e.g. ~15 min for 15 nodes, ~30 min for 32 nodes). Override to roll more
+  # pods concurrently; a percentage scales naturally with cluster size.
+  # See https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#rolling-update
+  updateStrategy: {}
+  # Example:
+  # updateStrategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxUnavailable: 25%
+  #     maxSurge: 0
+
   livenessProbe:
     initialDelaySeconds: 180
     periodSeconds: 60
