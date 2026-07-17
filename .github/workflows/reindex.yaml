@@ -22,7 +22,7 @@ jobs:
         run: |
           sudo snap install yq
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v7
         with:
           sparse-checkout: |
             artifacthub-repo.yaml
@@ -54,4 +54,4 @@ jobs:
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4.0.5
+        uses: actions/deploy-pages@v5
