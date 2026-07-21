@@ -26,14 +26,14 @@ collector:
   #         name: collector-config
   envFrom: []
 
-  # Resource limits and requests
+  # Unequal default requests and limits intentionally use Burstable QoS
   resources:
     limits:
       cpu: 1200m
       memory: 1Gi
     requests:
-      cpu: 800m
-      memory: 1Gi
+      cpu: 200m
+      memory: 512Mi
 
   # Node selector
   nodeSelector: {}
@@ -88,7 +88,7 @@ ebpf:
     pullPolicy: Always
 
   env:
-    GOMEMLIMIT: 1400MiB
+    GOMEMLIMIT: 900MiB
 
   # Example:
   #   envFrom:
@@ -102,10 +102,10 @@ ebpf:
   resources:
     limits:
       cpu: 1000m
-      memory: 3000Mi
+      memory: 2Gi
     requests:
-      cpu: 800m
-      memory: 1000Mi
+      cpu: 200m
+      memory: 1536Mi
 
   livenessProbe:
     initialDelaySeconds: 120
