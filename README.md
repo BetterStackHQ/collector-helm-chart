@@ -12,22 +12,19 @@ Better Stack collector is the easiest and recommended way of integrating Better 
 
 [Getting started ⇗](https://betterstack.com/docs/logs/collector/#getting-started)
 
-## System Requirements
+## System requirements
 
-### Memory Requirements
+The chart runs the collector and, by default, an eBPF container on each node with these resources:
 
-The Better Stack collector runs as a DaemonSet with two containers per node:
-- **Collector container**: 512MB-2GB memory
-- **eBPF container** (eBPF tracing): 1.5GB memory reserved
+| Container | CPU request | Memory request | CPU limit | Memory limit |
+| --- | ---: | ---: | ---: | ---: |
+| Collector | 200m | 512Mi | 1200m | 1Gi |
+| eBPF | 200m | 1536Mi | 1000m | 2Gi |
+| **Full-tracing total** | **400m** | **2Gi** | **2200m** | **3Gi** |
 
-**Minimum recommended node specifications:**
-- 4GB total memory per node
-- 2GB available memory after system and other critical workloads
+The collector-only configuration was validated on a **2 vCPU / 2 GiB node** with eBPF disabled. Use that as its planning guideline and a **4 vCPU / 4 GiB node** for full tracing. These are host/node sizing guidelines, not resource allocations: the requested capacity and enough headroom up to the limits must be available after Kubernetes, the operating system, and other workloads consume resources.
 
-**Important notes:**
-- The eBPF container requires 1.5GB memory reservation to ensure stable eBPF-based tracing
-- In memory-constrained or heavily overcommitted clusters, the collector may experience restarts
-- Both containers are configured with Guaranteed QoS class to prevent eviction under memory pressure
+Kubernetes uses requests to schedule and reserve capacity, while limits cap each container's usage. The unequal request and limit values are intentional, so the default Pod has **Burstable** rather than Guaranteed QoS. A container can be CPU-throttled or OOM-killed at its limits, and Burstable Pods have lower eviction priority than Guaranteed Pods under node pressure.
 
 ## Need help?
 
