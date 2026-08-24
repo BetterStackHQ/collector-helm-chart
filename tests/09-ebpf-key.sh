@@ -14,7 +14,7 @@ output=$(render \
   --set-json 'ebpf.resources={"limits":{"cpu":"1000m","memory":"3000Mi"},"requests":{"cpu":"800m","memory":"1000Mi"}}' \
   --set securityContext.ebpf.privileged=true)
 
-assert_contains "$output" "name: ebpf" "Expected ebpf container when using ebpf key"
+assert_contains "$output" "name: collector-host" "Expected collector-host container when using ebpf key"
 assert_contains "$output" "v1.0.0" "Expected custom image tag v1.0.0"
 
 pass

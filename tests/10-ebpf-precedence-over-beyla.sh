@@ -8,6 +8,6 @@ output=$(render \
   --set beyla.image.tag=custom-tag)
 
 assert_contains "$output" "custom-tag" "Expected beyla.image.tag to override ebpf default"
-assert_contains "$output" "name: ebpf" "Expected ebpf container to be present"
+assert_contains "$output" "name: collector-host" "Expected collector-host container to be present"
 
 pass

@@ -6,6 +6,6 @@ output=$(render \
   --set collector.env.COLLECTOR_SECRET=test123 \
   --set beyla.enabled=false)
 
-assert_not_contains "$output" "name: ebpf" "Expected ebpf container to be absent when disabled"
+assert_not_contains "$output" "name: collector-host" "Expected collector-host container to be absent when disabled"
 
 pass
