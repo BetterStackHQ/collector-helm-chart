@@ -7,7 +7,7 @@ output=$(render \
   --set ebpf.resources.requests.cpu=400m \
   --set ebpf.resources.limits.cpu=800m)
 
-assert_contains "$output" "name: ebpf" "Expected ebpf container when setting ebpf.resources without ebpf.enabled"
+assert_contains "$output" "name: collector-host" "Expected collector-host container when setting ebpf.resources without ebpf.enabled"
 assert_contains "$output" "ghcr.io/betterstackhq/collector-ebpf" "Expected default ebpf image from beyla defaults"
 
 pass

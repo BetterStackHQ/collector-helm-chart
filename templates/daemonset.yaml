@@ -150,7 +150,7 @@ spec:
           {{- toYaml .Values.collector.resources | nindent 10 }}
       {{- if eq (include "better-stack-collector.ebpf.enabled" .) "true" }}
       {{- $ebpf := include "better-stack-collector.ebpf" . | fromYaml }}
-      - name: ebpf
+      - name: collector-host
         {{- with $ebpf.image }}
         {{- if .digest }}
         image: "{{ .repository }}@{{ .digest }}"
@@ -175,7 +175,7 @@ spec:
           - name: COLLECTOR_NAME
             value: {{ include "better-stack-collector.fullname" . }}
           - name: CONTAINER_NAME
-            value: "ebpf"
+            value: "collector-host"
           - name: POD_NAME
             valueFrom:
               fieldRef:
