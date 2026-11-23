@@ -64,6 +64,19 @@ collector:
     timeoutSeconds: 10
     failureThreshold: 5
 
+  # The pod is Ready only while the collector sends data. A new pod first
+  # downloads its health check, then runs Vector on a console-only default
+  # config until its real config arrives (the updater asks every 15s). It
+  # stays Not Ready through all of that, so it doesn't flip back and forth
+  # during boot. Once Ready, it turns Not Ready after about a minute of failed
+  # checks, which rides out a short Vector reload. The check makes two requests
+  # of at most 4s each, so it needs a 10s timeout.
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 4
+
   # Host filesystem mount configuration
   # By default, mounts the entire host root filesystem at /host (read-only)
   # You can specify specific paths to mount instead. Each path will be mounted
