@@ -124,13 +124,13 @@ spec:
           timeoutSeconds: {{ .Values.collector.livenessProbe.timeoutSeconds }}
           failureThreshold: {{ .Values.collector.livenessProbe.failureThreshold }}
         # Unlike liveness, a missing script fails: it arrives after the container starts, and the
-        # collector sends nothing until then.
+        # collector sends nothing until then. --readiness checks without writing result files.
         readinessProbe:
           exec:
             command:
               - /bin/sh
               - -c
-              - if [ -x /var/lib/better-stack/collector/healthcheck.sh ]; then /var/lib/better-stack/collector/healthcheck.sh; else exit 1; fi
+              - if [ -x /var/lib/better-stack/collector/healthcheck.sh ]; then /var/lib/better-stack/collector/healthcheck.sh --readiness; else exit 1; fi
           {{- /* Fallbacks for helm upgrade --reuse-values from releases without this block */}}
           {{- $readiness := .Values.collector.readinessProbe | default dict }}
           initialDelaySeconds: {{ dig "initialDelaySeconds" 10 $readiness }}
