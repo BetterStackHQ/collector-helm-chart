@@ -138,6 +138,11 @@ rbac:
   create: true
   # Service account name
   serviceAccountName: better-stack-collector
+  # Let the collector read Kubernetes Secrets (get only, no list or watch).
+  # Needed when a betterstack.com/<database>-secret-name annotation points the
+  # collector at a Secret that holds database credentials. The collector reads
+  # only the Secrets such an annotation names.
+  readSecrets: false
 
 # set default ndots to prevent unnecessary DNS resolve calls
 dnsConfig:
